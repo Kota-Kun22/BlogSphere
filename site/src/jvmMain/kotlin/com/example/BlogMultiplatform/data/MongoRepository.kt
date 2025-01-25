@@ -1,5 +1,7 @@
 package com.example.BlogMultiplatform.data
 
+import com.example.BlogMultiplatform.models.User
+
 interface MongoRepository {
-    fun checkUserExists(username: String): Boolean
+    suspend fun checkUserExists(user: User): User?
 }
