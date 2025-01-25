@@ -12,8 +12,15 @@ kotlin {
     configAsKobwebWorker()
 
     sourceSets {
+        commonMain.dependencies {
+            implementation(libs.kotlinx.serialization)
+        }
         jsMain.dependencies {
             implementation(libs.kobweb.worker)
+            //implementation(libs.kotlinx.serialization)
+        }
+        jvmMain.dependencies {
+            implementation(libs.kotlinx.serialization)
         }
     }
 }
