@@ -6,10 +6,19 @@ import kotlinx.serialization.SerialName
 
 
 @Serializable
-data class User(
+actual data class User (
     @SerialName(value = "_id")
-    val id: String =ObjectId().toHexString() ,
-    val username: String,
-    val password: String
+    actual  val id: String =ObjectId().toHexString() ,
+    actual val username: String=" ",
+    actual val password: String=" "
+
+)
+
+@Serializable
+actual data class UserWithOutPassword(
+    @SerialName(value = "_id")
+    actual val id: String =ObjectId().toHexString() ,
+    actual val username: String=" ",
+
 
 )
