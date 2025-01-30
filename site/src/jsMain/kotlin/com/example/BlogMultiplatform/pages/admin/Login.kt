@@ -151,7 +151,7 @@ fun LoginScreen()
                                val user= checkUserExistence(user = User(username = username, password = password))
                                if(user!=null){
                                    rememberLoggedIn(remember = true, user = user)
-                                   context.router.navigateTo("/admin/home")
+                                   context.router.navigateTo("/admin")
 
                                }else
                                {
@@ -192,7 +192,7 @@ private fun rememberLoggedIn(remember:Boolean,user:UserWithOutPassword?=null)
     localStorage["remember"]=remember.toString()
     if(user!=null)
     {
-        localStorage["userId"]=user.id
+        localStorage["userId"]=user._id
         localStorage["username"]=user.username
 
     }

@@ -6,11 +6,12 @@ import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.and
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.varabyte.kobweb.api.data.add
+import com.varabyte.kobweb.api.init.InitApi
 import com.varabyte.kobweb.api.init.InitApiContext
 import kotlinx.coroutines.flow.firstOrNull
 
 
-
+@InitApi
 fun initMongoDB(context:InitApiContext)
 {
     System.setProperty(
