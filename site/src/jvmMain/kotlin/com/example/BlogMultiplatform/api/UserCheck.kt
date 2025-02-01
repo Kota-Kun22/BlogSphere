@@ -49,9 +49,28 @@ suspend fun userCheck(context: ApiContext) {
         context.res.setBodyText(Json.encodeToString(mapOf("error" to e.message)))
 
     }
+}
+@Api(routeOverride = "checkuserid")
+suspend fun checkUserId(context: ApiContext)
+{
+    try{
+        val idRequest= context.req.body?.decodeToString()?.let {
+            Json.decodeFromString<String>(it)
+        }
+        val result= idRequest?.let {
+            context.data.getValue<MongoDB>().checkUserId(it)
+        }
+        if(result!=null){
+            context.res.setBodyText(Json.encodeToString(result))
+        }else{
+            context.res.setBodyText(Json.encodeToString(false))
+        }
 
-
-
+    }
+    catch (e:Exception)
+    {
+        context.res.setBodyText(Json.encodeToString(Boolean))
+    }
 }
 private fun hashPassword(password:String):String
 {

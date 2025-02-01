@@ -2,6 +2,7 @@ package com.example.BlogMultiplatform.pages.admin
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import com.example.BlogMultiplatform.util.isUserLoggedIn
 import com.example.BlogMultiplatform.worker.EchoWorker
 import com.varabyte.kobweb.compose.foundation.layout.Box
 import com.varabyte.kobweb.compose.ui.Alignment
@@ -13,8 +14,16 @@ import org.jetbrains.compose.web.dom.Text
 
 @Page
 @Composable
-fun HomePage()
+fun HomeScreen()
 {
+
+    isUserLoggedIn {
+        HomePage()
+    }
+
+}
+@Composable
+fun HomePage(){
     val worker = rememberWorker { EchoWorker { output -> console.log("Echoed: $output") } }
     LaunchedEffect(Unit) {
         worker.postInput("Hello, HARSH!")
@@ -24,5 +33,5 @@ fun HomePage()
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text("FInally moved to the Admin page harsh rastogi going to sleep !!")
     }
-
+    println("ADMIN HOME PAGE")
 }
