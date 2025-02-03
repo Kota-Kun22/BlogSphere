@@ -1,22 +1,23 @@
 package com.example.BlogMultiplatform.pages.admin
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import com.example.BlogMultiplatform.components.SidePanel
+import com.example.BlogMultiplatform.util.Constants.PAGE_WIDTH
 import com.example.BlogMultiplatform.util.isUserLoggedIn
-import com.example.BlogMultiplatform.worker.EchoWorker
 import com.varabyte.kobweb.compose.foundation.layout.Box
+import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.ui.Alignment
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
+import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
 import com.varabyte.kobweb.core.Page
-import com.varabyte.kobweb.worker.rememberWorker
-import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.css.px
+
 
 @Page
 @Composable
 fun HomeScreen()
 {
-
     isUserLoggedIn {
         HomePage()
     }
@@ -24,14 +25,18 @@ fun HomeScreen()
 }
 @Composable
 fun HomePage(){
-    val worker = rememberWorker { EchoWorker { output -> console.log("Echoed: $output") } }
-    LaunchedEffect(Unit) {
-        worker.postInput("Hello, HARSH!")
+    Box(
+        modifier= Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ){
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .maxWidth(PAGE_WIDTH.px)
+        ){
+            SidePanel()
+
+        }
+
     }
 
-    // TODO: Replace the following with your own content
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("FInally moved to the Admin page harsh rastogi going to sleep !!")
-    }
-    println("ADMIN HOME PAGE")
 }
