@@ -1,14 +1,11 @@
 package com.example.BlogMultiplatform.styles
 import com.example.BlogMultiplatform.models.Theme
-import com.varabyte.kobweb.compose.css.TransitionProperty
-import com.varabyte.kobweb.compose.style.KobwebComposeStyleSheet.style
+
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.color
-import com.varabyte.kobweb.compose.ui.modifiers.transition
+
 import com.varabyte.kobweb.compose.ui.styleModifier
-import com.varabyte.kobweb.core.DefaultStyleSheet.hover
-import com.varabyte.kobweb.core.DefaultStyleSheet.style
-import com.varabyte.kobweb.silk.style.ComponentKind
+
 import com.varabyte.kobweb.silk.style.CssStyle
 
 
