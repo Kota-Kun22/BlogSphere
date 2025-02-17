@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import com.example.BlogMultiplatform.models.Theme
 import com.example.BlogMultiplatform.models.User
 import com.example.BlogMultiplatform.models.UserWithOutPassword
+import com.example.BlogMultiplatform.navigation.Screen
 import com.example.BlogMultiplatform.styles.loginInputStyle
 import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
 import com.example.BlogMultiplatform.util.Id
@@ -151,7 +152,7 @@ fun LoginScreen()
                                val user= checkUserExistence(user = User(username = username, password = password))
                                if(user!=null){
                                    rememberLoggedIn(remember = true, user = user)
-                                   context.router.navigateTo("/admin")
+                                   context.router.navigateTo(Screen.AdminHome.route)//"/admin"
 
                                }else
                                {

@@ -1,11 +1,9 @@
 package com.example.BlogMultiplatform.styles
 import com.example.BlogMultiplatform.models.Theme
-
+import com.example.BlogMultiplatform.util.Id
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.color
-
 import com.varabyte.kobweb.compose.ui.styleModifier
-
 import com.varabyte.kobweb.silk.style.CssStyle
 
 
@@ -19,13 +17,13 @@ val NavigationItemStyle = CssStyle {
     }
 
     // Smooth hover effect on text
-    cssRule(":hover> #navigationText")
+    cssRule(":hover> #${Id.navigationText}")
     {
         Modifier.color(Theme.Primary.rgb)
     }
 
     //Default icon color
-    cssRule("> #svgParent >#vectorIcon")
+    cssRule("> #${Id.svgParent} >#${Id.vectorIcon}")
     {
         Modifier.styleModifier {
             property("stroke", Theme.White.hex)
@@ -33,14 +31,14 @@ val NavigationItemStyle = CssStyle {
         }
     }
     //default text color
-    cssRule("> #navigationText"){
+    cssRule("> #${Id.navigationText}"){
         Modifier.styleModifier {
             property("color", Theme.White.hex)
             property("transition", "color 200ms ease-in-out") //  Correct transition syntax
         }
     }
     //smooth hover effect on icon
-    cssRule(":hover > #svgParent > #vectorIcon"){
+    cssRule(":hover > #${Id.svgParent} > #${Id.vectorIcon}"){
         Modifier.styleModifier {
             property("stroke", Theme.Primary.hex)
             property("transition", "stroke 200ms ease-in-out") //  Correct transition syntax
