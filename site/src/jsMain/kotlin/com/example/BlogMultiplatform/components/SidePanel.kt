@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import com.example.BlogMultiplatform.models.Theme
 import com.example.BlogMultiplatform.navigation.Screen
 import com.example.BlogMultiplatform.styles.NavigationItemStyle
+import com.example.BlogMultiplatform.util.Constants.COLLAPSED_SIDE_PANEL_HEIGHT
 import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
 import com.example.BlogMultiplatform.util.Constants.SIDE_PANEL_WIDTH
 import com.example.BlogMultiplatform.util.Id
@@ -12,14 +13,17 @@ import com.example.BlogMultiplatform.util.logout
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.dom.svg.Path
 import com.varabyte.kobweb.compose.dom.svg.Svg
+import com.varabyte.kobweb.compose.foundation.layout.Box
 import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.foundation.layout.Row
 import com.varabyte.kobweb.compose.ui.Alignment
 import com.varabyte.kobweb.compose.ui.Modifier
+import com.varabyte.kobweb.compose.ui.graphics.Colors
 import com.varabyte.kobweb.compose.ui.modifiers.backgroundColor
-import com.varabyte.kobweb.compose.ui.modifiers.classNames
 import com.varabyte.kobweb.compose.ui.modifiers.color
 import com.varabyte.kobweb.compose.ui.modifiers.cursor
+import com.varabyte.kobweb.compose.ui.modifiers.fillMaxHeight
+import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.fontFamily
 import com.varabyte.kobweb.compose.ui.modifiers.fontSize
 import com.varabyte.kobweb.compose.ui.modifiers.height
@@ -35,16 +39,35 @@ import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.graphics.Image
+import com.varabyte.kobweb.silk.components.icons.fa.FaBars
+import com.varabyte.kobweb.silk.components.icons.fa.FaXmark
+import com.varabyte.kobweb.silk.components.icons.fa.IconSize
 import com.varabyte.kobweb.silk.components.text.SpanText
+import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.style.toModifier
+import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
+import kotlinx.coroutines.delay
 
 import org.jetbrains.compose.web.css.Position
+import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.css.vh
 
 @Composable
-fun SidePanel(){
-    val context= rememberPageContext()
+fun SidePanel(onMenuClick: () -> Unit)
+{
+    val breakpoint= rememberBreakpoint()//it is trigged when the size of the screen changes
+    if(breakpoint>Breakpoint.MD)
+    {
+        SidePanelInternal()
+    }else {
+        CollapsedSidePanel(onMenuClick)
+    }
+
+}
+
+@Composable
+private fun SidePanelInternal(){
     Column(
         modifier =Modifier
             .padding(leftRight = 40.px, topBottom = 50.px)
@@ -60,54 +83,61 @@ fun SidePanel(){
             src = Res.Image.logo,
             description = "Logo Image"
         )
-        SpanText(
-            modifier = Modifier
-                .fontFamily(FONT_FAMILY)
-                .margin(30.px)
-                .color(Theme.HalfWhite.rgb)
-                .fontSize(16.px),
-            text="Dashboard"
-        )
-        NavigationItem(
-            modifier = Modifier.margin(bottom = 24.px),
-            title = "Home",
-            selected=context.route.path==(Screen.AdminHome.route),
-            icon=Res.PathIcon.home,
-            onClick = {
-                context.router.navigateTo(Screen.AdminHome.route)
-            }
-        )
-
-        NavigationItem(
-            modifier = Modifier.margin(bottom = 24.px),
-            title = "Create Post",
-            selected=context.route.path==(Screen.AdminCreate.route),
-            icon=Res.PathIcon.create,
-            onClick = {
-                context.router.navigateTo(Screen.AdminCreate.route)
-            }
-        )
-
-        NavigationItem(
-            modifier = Modifier.margin(bottom = 24.px),
-            selected=context.route.path==(Screen.AdminMyPost.route),
-            title = "My Post",
-            icon=Res.PathIcon.posts,
-            onClick = {
-                context.router.navigateTo(Screen.AdminMyPost.route)
-            }
-        )
-        NavigationItem(
-            title = "Logout",
-            icon=Res.PathIcon.logout,
-            onClick = {
-                logout()
-                context.router.navigateTo(Screen.AdminLogin.route)
-            }
-        )
-
+        NavigationItems()
 
     }
+}
+@Composable
+fun NavigationItems()
+{
+    val context= rememberPageContext()
+    SpanText(
+        modifier = Modifier
+            .fontFamily(FONT_FAMILY)
+            .margin(30.px)
+            .color(Theme.HalfWhite.rgb)
+            .fontSize(16.px),
+        text="Dashboard"
+    )
+    NavigationItem(
+        modifier = Modifier.margin(bottom = 24.px),
+        title = "Home",
+        selected=context.route.path==(Screen.AdminHome.route),
+        icon=Res.PathIcon.home,
+        onClick = {
+            context.router.navigateTo(Screen.AdminHome.route)
+        }
+    )
+
+    NavigationItem(
+        modifier = Modifier.margin(bottom = 24.px),
+        title = "Create Post",
+        selected=context.route.path==(Screen.AdminCreate.route),
+        icon=Res.PathIcon.create,
+        onClick = {
+            context.router.navigateTo(Screen.AdminCreate.route)
+        }
+    )
+
+    NavigationItem(
+        modifier = Modifier.margin(bottom = 24.px),
+        selected=context.route.path==(Screen.AdminMyPost.route),
+        title = "My Post",
+        icon=Res.PathIcon.posts,
+        onClick = {
+            context.router.navigateTo(Screen.AdminMyPost.route)
+        }
+    )
+    NavigationItem(
+        title = "Logout",
+        icon=Res.PathIcon.logout,
+        onClick = {
+            logout()
+            context.router.navigateTo(Screen.AdminLogin.route)
+        }
+    )
+
+
 }
 @Composable
 private fun NavigationItem(
@@ -179,4 +209,81 @@ private fun VectorIcon(
                 }
         )
     }
+}
+@Composable
+private fun CollapsedSidePanel(onMenuClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(COLLAPSED_SIDE_PANEL_HEIGHT.px)
+            .padding(leftRight = 24.px)
+            .backgroundColor(Theme.Secondary.rgb),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        FaBars(
+            modifier = Modifier
+                .margin(right = 24.px)
+                .color(Colors.White)
+                .cursor(Cursor.Pointer)
+                .onClick { onMenuClick() },
+            size = IconSize.XL
+        )
+        Image(
+            modifier = Modifier.width(80.px),
+            src = Res.Image.logo,
+            alt = "Logo Image"
+        )
+    }
+}
+@Composable
+fun OverflowSidePanel(onMenuClose: () ->Unit )
+{
+    val breakpoint= rememberBreakpoint()
+    Box(
+        modifier=Modifier
+            .fillMaxWidth()
+            .height(100.vh)
+            .position(Position.Fixed)
+            .zIndex(9)
+            .backgroundColor(Theme.HalfBlack.rgb)
+    ) {
+        Column(
+            modifier=Modifier
+                .padding(all = 24.px)
+                .fillMaxHeight()
+                .width(
+                    if(breakpoint < Breakpoint.MD) 50.percent
+                    else 25.percent)
+                .backgroundColor(Theme.Secondary.rgb)
+        ){
+            Row(
+                modifier = Modifier
+                    .margin(bottom = 60.px),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                FaXmark(
+                    modifier = Modifier
+                        .margin(right = 20.px)
+                        .color(Colors.White)
+                        .cursor(Cursor.Pointer)
+                        .onClick {
+                            onMenuClose()
+                        },
+                    size = IconSize.LG
+                )
+                Image(
+                    modifier = Modifier
+                        .width(80.px)
+                        .cursor(Cursor.Pointer),
+                    src = Res.Image.logo,
+                    alt = "Logo Image"
+                )
+            }
+            NavigationItems()
+
+        }
+
+
+    }
+
 }

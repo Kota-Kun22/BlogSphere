@@ -1,7 +1,13 @@
 package com.example.BlogMultiplatform.pages.admin
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.example.BlogMultiplatform.components.OverflowSidePanel
 import com.example.BlogMultiplatform.components.SidePanel
+
 import com.example.BlogMultiplatform.util.Constants.PAGE_WIDTH
 import com.example.BlogMultiplatform.util.isUserLoggedIn
 import com.varabyte.kobweb.compose.foundation.layout.Box
@@ -25,6 +31,7 @@ fun HomePage()
 }
 @Composable
 fun HomeScreen(){
+    var overflowMenuOpened by remember{ mutableStateOf(false)}
     Box(
         modifier= Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -33,7 +40,14 @@ fun HomeScreen(){
             .fillMaxSize()
             .maxWidth(PAGE_WIDTH.px)
         ){
-            SidePanel()
+            SidePanel(onMenuClick = {
+                overflowMenuOpened=true
+            })
+            if(overflowMenuOpened)
+            {
+                OverflowSidePanel(onMenuClose = { overflowMenuOpened=false})
+            }
+
 
         }
 

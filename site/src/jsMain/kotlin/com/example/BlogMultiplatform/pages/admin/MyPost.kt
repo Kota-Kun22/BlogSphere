@@ -2,6 +2,7 @@ package com.example.BlogMultiplatform.pages.admin
 
 import androidx.compose.runtime.Composable
 import com.example.BlogMultiplatform.components.SidePanel
+
 import com.example.BlogMultiplatform.util.Constants.PAGE_WIDTH
 import com.example.BlogMultiplatform.util.isUserLoggedIn
 import com.varabyte.kobweb.compose.foundation.layout.Box
@@ -33,7 +34,7 @@ fun MyPostScreen()
             .fillMaxSize()
             .maxWidth(PAGE_WIDTH.px)
         ){
-            SidePanel()
+            SidePanel(onMenuClick = {})
 
         }
 

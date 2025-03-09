@@ -4,6 +4,7 @@ object Constants {
     const val FONT_FAMILY="ROBOTO"
     const val SIDE_PANEL_WIDTH=250
     const val PAGE_WIDTH=1920
+    const val COLLAPSED_SIDE_PANEL_HEIGHT=100
 }
 
 object Res{

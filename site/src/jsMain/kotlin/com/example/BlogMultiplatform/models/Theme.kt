@@ -10,6 +10,8 @@ enum class Theme(val hex:String,val rgb:CSSColorValue)
     LightGray(hex="#FAFAFA",rgb= rgb(r=250,g=250,b=250) ),
     Secondary(hex="#001019",rgb= rgb(r=0,g=16,b=25)),
 
+    HalfBlack(hex="#000000",rgb= rgba(r=0,g=0,b=0,a=0.5)),
+
     HalfWhite(hex="#FFFFFF",rgb= rgba(r=255,g=255,b=255,a=0.5)),
     White(hex="#FFFFFF",rgb=rgb(r=255,g=255,b=255))
 }
