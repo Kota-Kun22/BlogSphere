@@ -22,6 +22,9 @@ mongodb-kotlin-driver = { module = "org.mongodb:mongodb-driver-kotlin-coroutine"
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtime-android" }
 
+kobweb-compose = { module = "com.varabyte.kobweb:kobweb-compose", version.ref = "kobweb" }
+
+
 
 [plugins]
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

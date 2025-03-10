@@ -1,6 +1,12 @@
 package com.example.BlogMultiplatform.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import com.example.BlogMultiplatform.models.Theme
 import com.example.BlogMultiplatform.navigation.Screen
 import com.example.BlogMultiplatform.styles.NavigationItemStyle
@@ -11,6 +17,8 @@ import com.example.BlogMultiplatform.util.Id
 import com.example.BlogMultiplatform.util.Res
 import com.example.BlogMultiplatform.util.logout
 import com.varabyte.kobweb.compose.css.Cursor
+import com.varabyte.kobweb.compose.css.Overflow
+import com.varabyte.kobweb.compose.css.ScrollBehavior
 import com.varabyte.kobweb.compose.dom.svg.Path
 import com.varabyte.kobweb.compose.dom.svg.Svg
 import com.varabyte.kobweb.compose.foundation.layout.Box
@@ -30,8 +38,12 @@ import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.id
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
+import com.varabyte.kobweb.compose.ui.modifiers.opacity
+import com.varabyte.kobweb.compose.ui.modifiers.overflow
 import com.varabyte.kobweb.compose.ui.modifiers.padding
 import com.varabyte.kobweb.compose.ui.modifiers.position
+import com.varabyte.kobweb.compose.ui.modifiers.scrollBehavior
+import com.varabyte.kobweb.compose.ui.modifiers.translateX
 import com.varabyte.kobweb.compose.ui.modifiers.width
 import com.varabyte.kobweb.compose.ui.modifiers.zIndex
 import com.varabyte.kobweb.compose.ui.styleModifier
@@ -47,11 +59,15 @@ import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.style.toModifier
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 import org.jetbrains.compose.web.css.Position
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.css.vh
+
+
+
 
 @Composable
 fun SidePanel(onMenuClick: () -> Unit)
@@ -238,27 +254,54 @@ private fun CollapsedSidePanel(onMenuClick: () -> Unit) {
 @Composable
 fun OverflowSidePanel(onMenuClose: () ->Unit )
 {
+    val scope = rememberCoroutineScope()
     val breakpoint= rememberBreakpoint()
+    var translateX by remember { mutableStateOf((-100).percent) }
+    var opacity by remember { mutableStateOf(0.percent) }
+
+    LaunchedEffect(key1 = breakpoint){
+        translateX=0.percent
+        opacity=100.percent
+        if(breakpoint>Breakpoint.MD){
+        scope.launch {
+            translateX= (-100).percent
+            opacity=0.percent
+            delay(500)
+            onMenuClose()
+        } }
+    }
+
+
     Box(
         modifier=Modifier
             .fillMaxWidth()
             .height(100.vh)
             .position(Position.Fixed)
             .zIndex(9)
+            .opacity(opacity)
+            .styleModifier {
+                property("transition", "opacity 300ms ease-in-out")
+            }
             .backgroundColor(Theme.HalfBlack.rgb)
     ) {
         Column(
             modifier=Modifier
                 .padding(all = 24.px)
                 .fillMaxHeight()
+                .translateX(translateX)
+                .styleModifier {
+                    property("transition", "translate 300ms ease-in-out")
+                }
                 .width(
                     if(breakpoint < Breakpoint.MD) 50.percent
                     else 25.percent)
+                .overflow(Overflow.Auto)
+                .scrollBehavior(ScrollBehavior.Smooth)
                 .backgroundColor(Theme.Secondary.rgb)
         ){
             Row(
                 modifier = Modifier
-                    .margin(bottom = 60.px),
+                    .margin(bottom = 60.px,top=24.px),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 FaXmark(
@@ -267,7 +310,12 @@ fun OverflowSidePanel(onMenuClose: () ->Unit )
                         .color(Colors.White)
                         .cursor(Cursor.Pointer)
                         .onClick {
-                            onMenuClose()
+                            scope.launch {
+                                translateX= (-100).percent
+                                opacity=0.percent
+                                delay(500)
+                                onMenuClose()
+                            }
                         },
                     size = IconSize.LG
                 )
