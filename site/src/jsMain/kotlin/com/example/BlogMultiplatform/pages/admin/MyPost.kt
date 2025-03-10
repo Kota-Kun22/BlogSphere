@@ -1,6 +1,7 @@
 package com.example.BlogMultiplatform.pages.admin
 
 import androidx.compose.runtime.Composable
+import com.example.BlogMultiplatform.components.AdminPageLayout
 import com.example.BlogMultiplatform.components.SidePanel
 
 import com.example.BlogMultiplatform.util.Constants.PAGE_WIDTH
@@ -26,17 +27,7 @@ fun MyPostsPage()
 @Composable
 fun MyPostScreen()
 {
-    Box(
-        modifier= Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ){
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .maxWidth(PAGE_WIDTH.px)
-        ){
-            SidePanel(onMenuClick = {})
-
-        }
+    AdminPageLayout {
 
     }
 }
