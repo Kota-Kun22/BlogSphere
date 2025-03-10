@@ -3,4 +3,4 @@ package com.example.BlogMultiplatform.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Joke(val id:Int, val joke:String)
+data class RandomJoke(val id:Int, val message:String)

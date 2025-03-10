@@ -1,14 +1,15 @@
 package com.example.BlogMultiplatform.pages.admin
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.example.BlogMultiplatform.components.AdminPageLayout
-import com.example.BlogMultiplatform.components.OverflowSidePanel
-import com.example.BlogMultiplatform.components.SidePanel
-import com.example.BlogMultiplatform.models.Joke
+import com.example.BlogMultiplatform.components.LoadingIndicator
+import com.example.BlogMultiplatform.models.RandomJoke
 import com.example.BlogMultiplatform.models.Theme
 import com.example.BlogMultiplatform.navigation.Screen
 import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
@@ -16,6 +17,7 @@ import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
 import com.example.BlogMultiplatform.util.Constants.PAGE_WIDTH
 import com.example.BlogMultiplatform.util.Constants.SIDE_PANEL_WIDTH
 import com.example.BlogMultiplatform.util.Res
+import com.example.BlogMultiplatform.util.fetchRandomJoke
 import com.example.BlogMultiplatform.util.isUserLoggedIn
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.FontWeight
@@ -70,24 +72,36 @@ fun HomePage()
 @Composable
 fun HomeScreen(){
 
-   AdminPageLayout {
-       HomeContent(joke=Joke(id=2,joke="haveeee you met ted.....:haveeee you met ted..... ? "))
+    var randomJoke :RandomJoke? by remember { mutableStateOf(null) }
+    val scope= rememberCoroutineScope()
+
+    LaunchedEffect(Unit){
+        fetchRandomJoke{
+            randomJoke=it
+        }
+    }
+
+    AdminPageLayout {
+       HomeContent(
+           randomJoke=randomJoke
+       )
        AddButton()
 
    }
 
 }
 @Composable
-fun HomeContent(joke: Joke?){
+fun HomeContent(randomJoke: RandomJoke?){
 
     val breakpoint = rememberBreakpoint()
+
     Box(
         modifier= Modifier
             .fillMaxSize()
             .padding(left = if(breakpoint>Breakpoint.MD) SIDE_PANEL_WIDTH.px else 0.px),
         contentAlignment = Alignment.Center
     ) {
-        if(joke != null)
+        if(randomJoke != null)
         {
             Column(
                 modifier= Modifier
@@ -96,7 +110,7 @@ fun HomeContent(joke: Joke?){
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
-                if(joke.id!=-1)
+                if(randomJoke.id!=-1)
                 {
                     Image(
                         modifier=Modifier
@@ -106,7 +120,7 @@ fun HomeContent(joke: Joke?){
                         description = "haha Image"
                     )
                 }
-                if(joke.joke.contains("Q:"))
+                if(randomJoke.message.contains("Q:"))
                 {
                     SpanText(
                         modifier = Modifier
@@ -117,17 +131,17 @@ fun HomeContent(joke: Joke?){
                             .fontSize(28.px)
                             .fontFamily(FONT_FAMILY)
                             .fontWeight(FontWeight.Bold),
-                        text = joke.joke.split(":")[1]
+                        text = randomJoke.message.split(":")[1].dropLast(1)
                     )
                     SpanText(
                         modifier = Modifier
-                            .fillMaxWidth(60.percent)
+                            .fillMaxWidth(40.percent)
                             .textAlign(TextAlign.Center)
                             .color(Theme.HalfBlack.rgb)
                             .fontSize(20.px)
                             .fontFamily(FONT_FAMILY)
                             .fontWeight(FontWeight.Normal),
-                        text = joke.joke.split(":").last()
+                        text = randomJoke.message.split(":").last()
                     )
 
                 }else{
@@ -140,14 +154,15 @@ fun HomeContent(joke: Joke?){
                             .fontSize(28.px)
                             .fontFamily(FONT_FAMILY)
                             .fontWeight(FontWeight.Bold),
-                        text = joke.joke.split(":")[1]
+                        text = randomJoke.message
                     )
 
                 }
             }
 
         }else{
-            println("LOADING PLEASE WAIT.....<3")
+            LoadingIndicator()
+            //println("LOADING PLEASE WAIT.....<3")
         }
     }
 

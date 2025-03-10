@@ -5,8 +5,9 @@ object Constants {
     const val SIDE_PANEL_WIDTH=250
     const val PAGE_WIDTH=1920
     const val COLLAPSED_SIDE_PANEL_HEIGHT=100
+    const val HUMOR_API_URL="https://praise-phrases-api.onrender.com/praise"
 }
-
+//"https://api.humorapi.com/jokes/random?include-tags=animal&api-key=e06e2011d9ad4facb64b3367a3804b32&max-length=180"
 object Res{
     object Image{
         const val logo= "/logo.svg"
