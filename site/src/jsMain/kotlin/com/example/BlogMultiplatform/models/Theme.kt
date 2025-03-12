@@ -19,4 +19,7 @@ enum class Theme(val hex:String,val rgb:CSSColorValue)
     Yellow(hex="#FFEC45",rgb=rgb(r=225,g=236,b=69)),
     Purple(hex="#8B6DFF",rgb=rgb(r=139,g=109,b=225)),
    // Purple(hex="#A370F7",rgb=rgb(r=163,g=112,b=247)),
+
+    gray(hex="#E9E9E9",rgb=rgb(r=233,g=233,b=233)),
+    darkGray(hex="#646464",rgb=rgb(r=100,g=100,b=100))
 }

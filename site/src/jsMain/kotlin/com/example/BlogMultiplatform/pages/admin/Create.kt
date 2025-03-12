@@ -11,6 +11,7 @@ import com.example.BlogMultiplatform.models.Theme
 import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
 import com.example.BlogMultiplatform.util.Constants.SIDE_PANEL_WIDTH
 import com.example.BlogMultiplatform.util.isUserLoggedIn
+import com.varabyte.kobweb.browser.file.loadDataUrlFromDisk
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Box
 import com.varabyte.kobweb.compose.foundation.layout.Column
@@ -35,7 +36,7 @@ import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import org.jetbrains.compose.web.css.px
 import com.varabyte.kobweb.compose.css.Cursor
-import com.varabyte.kobweb.compose.dom.svg.SVGColorChannel
+import com.varabyte.kobweb.compose.css.FontWeight
 import com.varabyte.kobweb.compose.ui.attrsModifier
 import com.varabyte.kobweb.compose.ui.graphics.Colors
 import com.varabyte.kobweb.compose.ui.modifiers.backgroundColor
@@ -43,15 +44,21 @@ import com.varabyte.kobweb.compose.ui.modifiers.border
 import com.varabyte.kobweb.compose.ui.modifiers.borderRadius
 import com.varabyte.kobweb.compose.ui.modifiers.classNames
 import com.varabyte.kobweb.compose.ui.modifiers.cursor
+import com.varabyte.kobweb.compose.ui.modifiers.disabled
+import com.varabyte.kobweb.compose.ui.modifiers.fillMaxHeight
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
+import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.outline
+import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.compose.ui.toAttrs
+import kotlinx.browser.document
 
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.Color
 import org.jetbrains.compose.web.css.LineStyle
 import org.jetbrains.compose.web.dom.A
+import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Input
 import org.jetbrains.compose.web.dom.Li
 import org.jetbrains.compose.web.dom.Text
@@ -74,6 +81,8 @@ fun CreateScreen()
     var popularSwitch by remember { mutableStateOf(false) }
     var mainSwitch by remember { mutableStateOf(false) }
     var sponsorSwitch by remember { mutableStateOf(false) }
+    var thumbnailInputDisabled by remember { mutableStateOf(true) }
+    var fileName by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf(Category.Technology) }
     AdminPageLayout {
 
@@ -209,6 +218,39 @@ fun CreateScreen()
                 )
                 CategoryDropDown(selectedCategory =selectedCategory, onCategorySelect ={selectedCategory=it} )
 
+                Row(
+                    modifier=Modifier
+                        .fillMaxWidth()
+                        .margin(topBottom = 12.px),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Switch(
+                        modifier = Modifier
+                            .margin(right=8.px),
+                        checked= !thumbnailInputDisabled,
+                        onCheckedChange = {thumbnailInputDisabled=!it},
+                        size= SwitchSize.MD
+                    )
+                    SpanText(
+                        modifier= Modifier
+                            .fontSize(16.px)
+                            .fontFamily(FONT_FAMILY)
+                            .color(Theme.HalfBlack.rgb),
+                        text = "Paste an Image URL instead"
+                    )
+                }
+                ThumbnailUploader(
+                    thumbnail = fileName,
+                    thumbnailInputDisabled = thumbnailInputDisabled,
+                    onThumbnailSelect = {filename,file->
+                        fileName= filename
+                        println(filename)
+                        println(file)
+
+                    }
+                )
+
 
             }
 
@@ -273,4 +315,76 @@ fun CategoryDropDown(
         }
 
     }
+}
+@Composable
+fun ThumbnailUploader(
+    thumbnail:String,
+    thumbnailInputDisabled: Boolean,
+    onThumbnailSelect: (String,String) -> Unit
+){
+    Row(modifier=Modifier
+        .fillMaxWidth()
+        .margin(bottom = 20.px)
+        .height(54.px)
+    ){
+        Input(
+            type = InputType.Text,
+            attrs = Modifier
+                .fillMaxSize()
+                .margin(right = 12.px)
+                .backgroundColor(Theme.LightGray.rgb)
+                .padding(leftRight = 20.px)
+                .border(width = 0.px, style = LineStyle.None, color = Colors.Transparent)
+                .outline(width = 0.px, style = LineStyle.None, color = Colors.Transparent)
+                .fontFamily(FONT_FAMILY)
+                .fontSize(16.px)
+                .thenIf(
+                    condition = thumbnailInputDisabled,
+                    other=Modifier.disabled()
+                )
+                .toAttrs{
+                    attr("placeholder","Thumbnail URL")
+                    attr("value",thumbnail)
+                }
+        )
+        Button(
+            attrs= Modifier
+                .onClick {
+                    document.loadDataUrlFromDisk(
+                        accept = "image/png, image/jpeg",
+                        onLoad = {
+                            onThumbnailSelect(filename, it)
+                        }
+                    )
+                }
+                .fillMaxHeight()
+                .padding(leftRight = 24.px)
+                .backgroundColor( if(!thumbnailInputDisabled) Theme.gray.rgb else Theme.Primary.rgb )
+                .color( if(!thumbnailInputDisabled) Theme.darkGray.rgb else Color.white )
+                .borderRadius(r=4.px)
+                .border (
+                    width=8.px,
+                    style=LineStyle.None,
+                    color= Color.transparent
+                )
+                .outline(
+                    width = 0.px,
+                    style = LineStyle.None,
+                    color = Color.transparent,
+
+                    )
+                .fontFamily(FONT_FAMILY)
+                .fontWeight(FontWeight.Medium)
+                .fontSize(16.px)
+                .thenIf(
+                    condition = !thumbnailInputDisabled,
+                    other=Modifier.disabled()
+                )
+                .toAttrs()
+        ) {
+            SpanText(text = "Upload")
+        }
+
+    }
+
 }
