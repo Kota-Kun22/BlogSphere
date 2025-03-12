@@ -5,12 +5,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.withRunningRecomposer
 import com.example.BlogMultiplatform.components.AdminPageLayout
+import com.example.BlogMultiplatform.models.Category
 import com.example.BlogMultiplatform.models.Theme
 import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
 import com.example.BlogMultiplatform.util.Constants.SIDE_PANEL_WIDTH
-import com.example.BlogMultiplatform.util.Id
 import com.example.BlogMultiplatform.util.isUserLoggedIn
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Box
@@ -18,7 +17,6 @@ import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.foundation.layout.Row
 import com.varabyte.kobweb.compose.ui.Alignment
 import com.varabyte.kobweb.compose.ui.Modifier
-import com.varabyte.kobweb.compose.ui.modifiers.alignItems
 import com.varabyte.kobweb.compose.ui.modifiers.color
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
 import com.varabyte.kobweb.compose.ui.modifiers.fontFamily
@@ -27,32 +25,37 @@ import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.padding
-import com.varabyte.kobweb.compose.ui.modifiers.size
 import com.varabyte.kobweb.core.Page
 import com.varabyte.kobweb.silk.components.forms.Switch
 import com.varabyte.kobweb.silk.components.forms.SwitchSize
-import com.varabyte.kobweb.silk.components.forms.SwitchStyle
 import com.varabyte.kobweb.silk.components.layout.SimpleGrid
 import com.varabyte.kobweb.silk.components.layout.numColumns
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import org.jetbrains.compose.web.css.px
-import com.varabyte.kobweb.compose.css.AlignItems
-import com.varabyte.kobweb.compose.style.KobwebComposeStyleSheet.attr
+import com.varabyte.kobweb.compose.css.Cursor
+import com.varabyte.kobweb.compose.dom.svg.SVGColorChannel
+import com.varabyte.kobweb.compose.ui.attrsModifier
+import com.varabyte.kobweb.compose.ui.graphics.Colors
 import com.varabyte.kobweb.compose.ui.modifiers.backgroundColor
 import com.varabyte.kobweb.compose.ui.modifiers.border
 import com.varabyte.kobweb.compose.ui.modifiers.borderRadius
+import com.varabyte.kobweb.compose.ui.modifiers.classNames
+import com.varabyte.kobweb.compose.ui.modifiers.cursor
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
-import com.varabyte.kobweb.compose.ui.modifiers.id
+import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.outline
 import com.varabyte.kobweb.compose.ui.toAttrs
 
-import com.varabyte.kobweb.silk.theme.colors.palette.SilkWidgetColorGroups
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.Color
 import org.jetbrains.compose.web.css.LineStyle
+import org.jetbrains.compose.web.dom.A
 import org.jetbrains.compose.web.dom.Input
+import org.jetbrains.compose.web.dom.Li
+import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.dom.Ul
 
 
 @Page
@@ -71,6 +74,7 @@ fun CreateScreen()
     var popularSwitch by remember { mutableStateOf(false) }
     var mainSwitch by remember { mutableStateOf(false) }
     var sponsorSwitch by remember { mutableStateOf(false) }
+    var selectedCategory by remember { mutableStateOf(Category.Programing) }
     AdminPageLayout {
 
         Box(modifier= Modifier
@@ -203,11 +207,70 @@ fun CreateScreen()
 
                         }
                 )
+                CategoryDropDown(selectedCategory = Category.Programing, onCategorySelect ={selectedCategory=it} )
 
 
             }
 
 
         }
+    }
+}
+@Composable
+fun CategoryDropDown(
+    selectedCategory:Category,
+    onCategorySelect:(Category)->Unit)
+{
+    Box(
+        modifier = Modifier
+            .margin(topBottom = 12.px)
+            .classNames("dropdown")
+            .fillMaxWidth()
+            .height(54.px)
+            .backgroundColor(Theme.LightGray.rgb)
+            .cursor(Cursor.Pointer)
+            .attrsModifier {
+                attr("data-bs-toggle", "dropdown")
+            }
+    ){
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(leftRight = 20.px),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            SpanText(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fontSize(16.px)
+                    .fontFamily(FONT_FAMILY),
+                text = selectedCategory.name
+            )
+            Box(modifier = Modifier.classNames("dropdown-toggle"))
+        }
+        Ul(
+            attrs = Modifier
+                .fillMaxWidth()
+                .classNames("dropdown-menu")
+                .toAttrs()
+        ){
+            Category.entries.forEach { category ->
+                Li {
+                   A(
+                        attrs = Modifier
+                            .classNames("dropdown-item")
+                            .color(Colors.Black)
+                            .fontFamily(FONT_FAMILY)
+                            .fontSize(16.px)
+                            .onClick { onCategorySelect(category) }
+                            .toAttrs()
+                    ) {
+                        Text(value = category.name)
+                    }
+                }
+            }
+        }
+
     }
 }
