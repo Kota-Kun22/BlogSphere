@@ -74,7 +74,7 @@ fun CreateScreen()
     var popularSwitch by remember { mutableStateOf(false) }
     var mainSwitch by remember { mutableStateOf(false) }
     var sponsorSwitch by remember { mutableStateOf(false) }
-    var selectedCategory by remember { mutableStateOf(Category.Programing) }
+    var selectedCategory by remember { mutableStateOf(Category.Technology) }
     AdminPageLayout {
 
         Box(modifier= Modifier
@@ -207,7 +207,7 @@ fun CreateScreen()
 
                         }
                 )
-                CategoryDropDown(selectedCategory = Category.Programing, onCategorySelect ={selectedCategory=it} )
+                CategoryDropDown(selectedCategory =selectedCategory, onCategorySelect ={selectedCategory=it} )
 
 
             }
