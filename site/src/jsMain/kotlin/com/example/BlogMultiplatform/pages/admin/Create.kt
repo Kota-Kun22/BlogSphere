@@ -7,9 +7,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.BlogMultiplatform.components.AdminPageLayout
 import com.example.BlogMultiplatform.models.Category
+import com.example.BlogMultiplatform.models.EditorKey
 import com.example.BlogMultiplatform.models.Theme
+import com.example.BlogMultiplatform.styles.EditorKeyStyle
 import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
 import com.example.BlogMultiplatform.util.Constants.SIDE_PANEL_WIDTH
+import com.example.BlogMultiplatform.util.Id
 import com.example.BlogMultiplatform.util.isUserLoggedIn
 import com.varabyte.kobweb.browser.file.loadDataUrlFromDisk
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
@@ -37,6 +40,10 @@ import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import org.jetbrains.compose.web.css.px
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.FontWeight
+import com.varabyte.kobweb.compose.css.Overflow
+import com.varabyte.kobweb.compose.css.Resize
+import com.varabyte.kobweb.compose.css.ScrollBehavior
+import com.varabyte.kobweb.compose.css.Visibility
 import com.varabyte.kobweb.compose.ui.attrsModifier
 import com.varabyte.kobweb.compose.ui.graphics.Colors
 import com.varabyte.kobweb.compose.ui.modifiers.backgroundColor
@@ -48,10 +55,18 @@ import com.varabyte.kobweb.compose.ui.modifiers.disabled
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxHeight
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
+import com.varabyte.kobweb.compose.ui.modifiers.id
+import com.varabyte.kobweb.compose.ui.modifiers.maxHeight
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.outline
+import com.varabyte.kobweb.compose.ui.modifiers.overflow
+import com.varabyte.kobweb.compose.ui.modifiers.resize
+import com.varabyte.kobweb.compose.ui.modifiers.scrollBehavior
+import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.compose.ui.toAttrs
+import com.varabyte.kobweb.silk.components.graphics.Image
+import com.varabyte.kobweb.silk.style.toModifier
 import kotlinx.browser.document
 
 import org.jetbrains.compose.web.attributes.InputType
@@ -59,9 +74,11 @@ import org.jetbrains.compose.web.css.Color
 import org.jetbrains.compose.web.css.LineStyle
 import org.jetbrains.compose.web.dom.A
 import org.jetbrains.compose.web.dom.Button
+import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Input
 import org.jetbrains.compose.web.dom.Li
 import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.dom.TextArea
 import org.jetbrains.compose.web.dom.Ul
 
 
@@ -82,8 +99,10 @@ fun CreateScreen()
     var mainSwitch by remember { mutableStateOf(false) }
     var sponsorSwitch by remember { mutableStateOf(false) }
     var thumbnailInputDisabled by remember { mutableStateOf(true) }
+    var editorVisibility by remember { mutableStateOf(true) }
     var fileName by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf(Category.Technology) }
+
     AdminPageLayout {
 
         Box(modifier= Modifier
@@ -250,6 +269,29 @@ fun CreateScreen()
 
                     }
                 )
+                EditorControls(
+                    breakpoint = breakpoint,
+                    editorVisibility=editorVisibility,
+                    oneditorVisibilityChange = {editorVisibility=!editorVisibility}
+                )
+
+
+                Editor(editorVisibility = editorVisibility)
+
+                Button(
+                    attrs = Modifier
+                        .fillMaxWidth()
+                        .height(54.px)
+                        .margin(top=24.px)
+                        .backgroundColor(Theme.Primary.rgb)
+                        .color(Colors.White)
+                        .border(width = 0.px, style = LineStyle.None, color = Colors.Transparent)
+                        .outline(width = 0.px, style = LineStyle.None, color = Colors.Transparent)
+                        .fontFamily(FONT_FAMILY)
+                        .toAttrs()
+                ) {
+                    SpanText(text="Create Your Blog!!")
+                }
 
 
             }
@@ -384,7 +426,156 @@ fun ThumbnailUploader(
         ) {
             SpanText(text = "Upload")
         }
+    }
+}
+
+
+
+@Composable
+fun EditorControls(breakpoint: Breakpoint,editorVisibility: Boolean,oneditorVisibilityChange:()->Unit){
+    Box(modifier= Modifier.fillMaxWidth()){
+
+        SimpleGrid(
+            modifier =Modifier.fillMaxWidth() ,
+            numColumns= numColumns(base=1,sm=2)){
+            Row(
+                modifier= Modifier
+                    .backgroundColor(Theme.LightGray.rgb)
+                    .borderRadius(r= 4.px)
+                    .height(54.px)
+            ){
+                EditorKey.values().forEach {
+                    EditorKeyView(key=it)
+                }
+
+            }
+         Box(contentAlignment = Alignment.CenterEnd){
+             Button(
+                 attrs = Modifier
+                     .margin(topBottom = if(breakpoint<Breakpoint.SM)12.px else 0.px)
+                     .padding(leftRight = 24.px)
+                     .thenIf(
+                         condition = breakpoint< Breakpoint.SM,
+                         other=Modifier.fillMaxWidth()
+                     )
+                     .borderRadius(4.px)
+                     .color(
+                         if(editorVisibility) Theme.darkGray.rgb
+                         else Color.white
+                     )
+                     .backgroundColor(
+                         if(editorVisibility) Theme.LightGray.rgb
+                         else Theme.Primary.rgb
+                     )
+                     .border(
+                         width = 0.px,
+                         style = LineStyle.None,
+                         color = Colors.Transparent
+
+                     )
+                     .outline(
+                         width = 0.px,
+                         style = LineStyle.None,
+                         color = Colors.Transparent
+                     )
+                     .onClick { oneditorVisibilityChange() }
+                     .toAttrs()
+             ){
+                 SpanText(
+                     modifier = Modifier
+
+                         .fontWeight(FontWeight.Medium)
+                         .fontSize(16.px),
+                     text = "PREVIEW")
+             }
+         }
+        }
+    }
+}
+@Composable
+fun EditorKeyView(key:EditorKey) {
+
+    Box(
+        modifier= EditorKeyStyle.toModifier()
+            .fillMaxHeight()
+            .padding(leftRight = 12.px)
+            .borderRadius(r=4.px)
+            .cursor(Cursor.Pointer)
+            .onClick {  },
+        contentAlignment = Alignment.Center
+    ){
+        Image(
+            src = key.icon,
+            description = "${key.name} Icon"
+        )
 
     }
 
+}
+@Composable
+fun Editor(editorVisibility:Boolean)
+{
+    Box(modifier = Modifier.fillMaxWidth()){
+
+        TextArea(
+            attrs = Modifier
+                .id(Id.editor)
+                .fillMaxWidth()
+                .height(400.px)
+                .maxHeight(400.px)
+                .padding(all= 20.px)
+                .margin(top=8.px)
+                .backgroundColor(Theme.LightGray.rgb)
+                .borderRadius(r= 4.px)
+                .resize(Resize.None)
+                .fontFamily(FONT_FAMILY)
+                .border(
+                    width = 0.px,
+                    style = LineStyle.None,
+                    color = Colors.Transparent
+                )
+                .outline(
+                    width = 0.px,
+                    style = LineStyle.None,
+                    color = Colors.Transparent
+                )
+                .visibility(
+                    if(editorVisibility) Visibility.Visible
+                    else Visibility.Hidden
+                )
+                .fontSize(17.px)
+                .toAttrs{
+                    attr("placeholder", "Start writing your article...")
+                }
+        )
+        Div(
+            attrs = Modifier
+                .id(Id.editorPreview)
+                .fillMaxWidth()
+                .height(400.px)
+                .maxHeight(400.px)
+                .margin(top = 8.px)
+                .padding(all = 20.px)
+                .backgroundColor(Theme.LightGray.rgb)
+                .borderRadius(r = 4.px)
+                .visibility(
+                    if (editorVisibility) Visibility.Hidden
+                    else Visibility.Visible
+                )
+                .overflow(Overflow.Auto)
+                .border(
+                    width = 0.px,
+                    style = LineStyle.None,
+                    color = Colors.Transparent
+                )
+                .outline(
+                    width = 0.px,
+                    style = LineStyle.None,
+                    color = Colors.Transparent
+                )
+                .scrollBehavior(ScrollBehavior.Smooth)
+                .toAttrs()
+        )
+
+    }
 }
