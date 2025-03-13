@@ -14,6 +14,7 @@ import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
 import com.example.BlogMultiplatform.util.Constants.SIDE_PANEL_WIDTH
 import com.example.BlogMultiplatform.util.Id
 import com.example.BlogMultiplatform.util.isUserLoggedIn
+import com.example.BlogMultiplatform.util.noBorder
 import com.varabyte.kobweb.browser.file.loadDataUrlFromDisk
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Box
@@ -100,7 +101,7 @@ fun CreateScreen()
     var sponsorSwitch by remember { mutableStateOf(false) }
     var thumbnailInputDisabled by remember { mutableStateOf(true) }
     var editorVisibility by remember { mutableStateOf(true) }
-    var fileName by remember { mutableStateOf("") }
+    var thumbnail by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf(Category.Technology) }
 
     AdminPageLayout {
@@ -190,17 +191,7 @@ fun CreateScreen()
                         .padding(leftRight = 20.px)
                         .backgroundColor(Theme.LightGray.rgb)
                         .borderRadius(r = 4.px)
-                        .border (
-                            width=8.px,
-                            style=LineStyle.None,
-                            color= Color.transparent
-                            )
-                        .outline(
-                            width = 0.px,
-                            style = LineStyle.None,
-                            color = Color.transparent,
-
-                        )
+                        .noBorder()
                         .fontFamily(FONT_FAMILY)
                         .fontSize(16.px)
                         .toAttrs {
@@ -217,17 +208,7 @@ fun CreateScreen()
                         .padding(leftRight = 20.px)
                         .backgroundColor(Theme.LightGray.rgb)
                         .borderRadius(r = 4.px)
-                        .border (
-                            width=8.px,
-                            style=LineStyle.None,
-                            color= Color.transparent
-                        )
-                        .outline(
-                            width = 0.px,
-                            style = LineStyle.None,
-                            color = Color.transparent,
-
-                            )
+                        .noBorder()
                         .fontFamily(FONT_FAMILY)
                         .fontSize(16.px)
                         .toAttrs {
@@ -260,10 +241,10 @@ fun CreateScreen()
                     )
                 }
                 ThumbnailUploader(
-                    thumbnail = fileName,
+                    thumbnail = thumbnail,
                     thumbnailInputDisabled = thumbnailInputDisabled,
                     onThumbnailSelect = {filename,file->
-                        fileName= filename
+                        thumbnail= filename
                         println(filename)
                         println(file)
 
@@ -278,20 +259,7 @@ fun CreateScreen()
 
                 Editor(editorVisibility = editorVisibility)
 
-                Button(
-                    attrs = Modifier
-                        .fillMaxWidth()
-                        .height(54.px)
-                        .margin(top=24.px)
-                        .backgroundColor(Theme.Primary.rgb)
-                        .color(Colors.White)
-                        .border(width = 0.px, style = LineStyle.None, color = Colors.Transparent)
-                        .outline(width = 0.px, style = LineStyle.None, color = Colors.Transparent)
-                        .fontFamily(FONT_FAMILY)
-                        .toAttrs()
-                ) {
-                    SpanText(text="Create Your Blog!!")
-                }
+                CreateButton(onClick = {  })
 
 
             }
@@ -467,17 +435,7 @@ fun EditorControls(breakpoint: Breakpoint,editorVisibility: Boolean,oneditorVisi
                          if(editorVisibility) Theme.LightGray.rgb
                          else Theme.Primary.rgb
                      )
-                     .border(
-                         width = 0.px,
-                         style = LineStyle.None,
-                         color = Colors.Transparent
-
-                     )
-                     .outline(
-                         width = 0.px,
-                         style = LineStyle.None,
-                         color = Colors.Transparent
-                     )
+                     .noBorder()
                      .onClick { oneditorVisibilityChange() }
                      .toAttrs()
              ){
@@ -529,16 +487,7 @@ fun Editor(editorVisibility:Boolean)
                 .borderRadius(r= 4.px)
                 .resize(Resize.None)
                 .fontFamily(FONT_FAMILY)
-                .border(
-                    width = 0.px,
-                    style = LineStyle.None,
-                    color = Colors.Transparent
-                )
-                .outline(
-                    width = 0.px,
-                    style = LineStyle.None,
-                    color = Colors.Transparent
-                )
+                .noBorder()
                 .visibility(
                     if(editorVisibility) Visibility.Visible
                     else Visibility.Hidden
@@ -563,19 +512,30 @@ fun Editor(editorVisibility:Boolean)
                     else Visibility.Visible
                 )
                 .overflow(Overflow.Auto)
-                .border(
-                    width = 0.px,
-                    style = LineStyle.None,
-                    color = Colors.Transparent
-                )
-                .outline(
-                    width = 0.px,
-                    style = LineStyle.None,
-                    color = Colors.Transparent
-                )
+                .noBorder()
                 .scrollBehavior(ScrollBehavior.Smooth)
                 .toAttrs()
         )
 
+    }
+}
+@Composable
+fun CreateButton(onClick: () -> Unit)
+{
+    Button(
+        attrs = Modifier
+            .onClick { onClick() }
+            .fillMaxWidth()
+            .height(54.px)
+            .margin(top=24.px)
+            .backgroundColor(Theme.Primary.rgb)
+            .color(Colors.White)
+            .borderRadius(r=4.px)
+            .noBorder()
+            .fontFamily(FONT_FAMILY)
+            .fontSize(16.px)
+            .toAttrs()
+    ) {
+        SpanText(text="Create Your Blog!!")
     }
 }
