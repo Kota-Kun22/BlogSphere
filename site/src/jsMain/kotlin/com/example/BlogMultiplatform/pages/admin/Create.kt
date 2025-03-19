@@ -7,16 +7,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.example.BlogMultiplatform.components.AdminPageLayout
+import com.example.BlogMultiplatform.components.LinkPopup
 import com.example.BlogMultiplatform.components.MessagePopup
 import com.example.BlogMultiplatform.models.Category
-import com.example.BlogMultiplatform.models.EditorKey
+import com.example.BlogMultiplatform.models.ControlStyle
+import com.example.BlogMultiplatform.models.EditorControl
 import com.example.BlogMultiplatform.models.Post
 import com.example.BlogMultiplatform.models.Theme
+import com.example.BlogMultiplatform.navigation.Screen
 import com.example.BlogMultiplatform.styles.EditorKeyStyle
 import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
 import com.example.BlogMultiplatform.util.Constants.SIDE_PANEL_WIDTH
 import com.example.BlogMultiplatform.util.Id
 import com.example.BlogMultiplatform.util.addPost
+import com.example.BlogMultiplatform.util.applyControlStyle
+import com.example.BlogMultiplatform.util.applyStyle
+import com.example.BlogMultiplatform.util.getSelectedText
 import com.example.BlogMultiplatform.util.isUserLoggedIn
 import com.example.BlogMultiplatform.util.noBorder
 import com.varabyte.kobweb.browser.file.loadDataUrlFromDisk
@@ -70,6 +76,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.scrollBehavior
 import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.compose.ui.toAttrs
+import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.style.toModifier
 import kotlinx.browser.document
@@ -106,7 +113,8 @@ data class CreatePageUiState(
     var main:Boolean=false,
     var sponsored:Boolean=false,
     var editorVisibility: Boolean=true,
-    var messagePopup:Boolean=false
+    var messagePopup:Boolean=false,
+    var linkPopup:Boolean=false
 )
 
 @Page
@@ -121,6 +129,7 @@ fun CreatePage()
 @Composable
 fun CreateScreen()
 {
+    val context= rememberPageContext()
     val scope=rememberCoroutineScope()
     val breakpoint= rememberBreakpoint()
    var uiState by remember { mutableStateOf(CreatePageUiState()) }
@@ -280,7 +289,14 @@ fun CreateScreen()
                 EditorControls(
                     breakpoint = breakpoint,
                     editorVisibility=uiState.editorVisibility,
-                    oneditorVisibilityChange = {uiState=uiState.copy(editorVisibility = !uiState.editorVisibility)}
+                    oneEditorVisibilityChange = {
+                        uiState=uiState.copy(
+                            editorVisibility = !uiState.editorVisibility
+                        )
+                    },
+                    onLinkClick = {
+                        uiState=uiState.copy(linkPopup = true)
+                    }
                 )
 
 
@@ -325,6 +341,7 @@ fun CreateScreen()
                                 )
                             )
                             if(result){
+                                context.router.navigateTo(Screen.AdminSuccess.route)
                                 println("SUCCESSFULLLLLLLLLLLL")
                             }
                         }
@@ -352,6 +369,23 @@ fun CreateScreen()
             onDialogDismiss = { uiState=uiState.copy(messagePopup = false)}
         )
     }
+
+    if(uiState.linkPopup){
+        LinkPopup(
+            onDialogDismiss = { uiState=uiState.copy(linkPopup = false)},
+            onLinkAdded = { href,title->
+                applyStyle(
+                    ControlStyle.Link(
+                        selectedText = getSelectedText(),
+                        href = href,
+                        title= title
+                    )
+                )
+            }
+        )
+    }
+
+
 }
 @Composable
 fun CategoryDropDown(
@@ -486,7 +520,11 @@ fun ThumbnailUploader(
 
 
 @Composable
-fun EditorControls(breakpoint: Breakpoint,editorVisibility: Boolean,oneditorVisibilityChange:()->Unit){
+fun EditorControls(
+    breakpoint: Breakpoint,
+    editorVisibility: Boolean,
+    onLinkClick: () -> Unit,
+    oneEditorVisibilityChange:()->Unit){
     Box(modifier= Modifier.fillMaxWidth()){
 
         SimpleGrid(
@@ -498,8 +536,10 @@ fun EditorControls(breakpoint: Breakpoint,editorVisibility: Boolean,oneditorVisi
                     .borderRadius(r= 4.px)
                     .height(54.px)
             ){
-                EditorKey.values().forEach {
-                    EditorKeyView(key=it)
+                EditorControl.values().forEach {
+                    EditorControlView(control=it, onClick = {
+                        applyControlStyle(editorControl = it,onLinkClick= onLinkClick)
+                    })
                 }
 
             }
@@ -522,7 +562,7 @@ fun EditorControls(breakpoint: Breakpoint,editorVisibility: Boolean,oneditorVisi
                          else Theme.Primary.rgb
                      )
                      .noBorder()
-                     .onClick { oneditorVisibilityChange() }
+                     .onClick { oneEditorVisibilityChange() }
                      .toAttrs()
              ){
                  SpanText(
@@ -536,8 +576,13 @@ fun EditorControls(breakpoint: Breakpoint,editorVisibility: Boolean,oneditorVisi
         }
     }
 }
+
+
 @Composable
-fun EditorKeyView(key:EditorKey) {
+fun EditorControlView(
+    control:EditorControl,
+    onClick: () -> Unit
+) {
 
     Box(
         modifier= EditorKeyStyle.toModifier()
@@ -545,17 +590,19 @@ fun EditorKeyView(key:EditorKey) {
             .padding(leftRight = 12.px)
             .borderRadius(r=4.px)
             .cursor(Cursor.Pointer)
-            .onClick {  },
+            .onClick { onClick() },
         contentAlignment = Alignment.Center
     ){
         Image(
-            src = key.icon,
-            description = "${key.name} Icon"
+            src = control.icon,
+            description = "${control.name} Icon"
         )
 
     }
 
 }
+
+
 @Composable
 fun Editor(editorVisibility:Boolean)
 {
@@ -605,6 +652,8 @@ fun Editor(editorVisibility:Boolean)
 
     }
 }
+
+
 @Composable
 fun CreateButton(onClick: () -> Unit)
 {

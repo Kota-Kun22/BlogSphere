@@ -2,7 +2,7 @@ package com.example.BlogMultiplatform.models
 
 import com.example.BlogMultiplatform.util.Res
 
-enum class EditorKey(
+enum class EditorControl(
     val icon:String
 ) {
     Bold(icon = Res.Icon.bold),
