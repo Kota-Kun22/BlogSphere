@@ -14,7 +14,7 @@ actual data class Post(
     actual val subtitle:String,
     actual val thumbnail:String,
     actual val content:String,
-    actual val category:String,
+    actual val category:Category,
     actual val popular:Boolean=false,
     actual val main:Boolean=false,
     actual val sponsored:Boolean=false

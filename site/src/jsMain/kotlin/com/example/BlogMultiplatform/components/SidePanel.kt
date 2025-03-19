@@ -330,8 +330,5 @@ fun OverflowSidePanel(onMenuClose: () ->Unit )
             NavigationItems()
 
         }
-
-
     }
-
 }

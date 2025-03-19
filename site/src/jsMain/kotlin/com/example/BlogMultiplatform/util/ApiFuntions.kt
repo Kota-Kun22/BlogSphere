@@ -1,5 +1,6 @@
 package com.example.BlogMultiplatform.util
 
+import com.example.BlogMultiplatform.models.Post
 import com.example.BlogMultiplatform.models.RandomJoke
 import com.example.BlogMultiplatform.models.User
 import com.example.BlogMultiplatform.models.UserWithOutPassword
@@ -116,5 +117,18 @@ suspend fun fetchRandomJoke(onComplete: (RandomJoke) -> Unit) {
             onComplete(RandomJoke(id = -1, message = e.message.toString()))
             println(e.message)
         }
+    }
+}
+
+suspend fun addPost(post: Post): Boolean {
+    return try {
+        window.api.tryPost(
+            apiPath = "addpost",
+            body = Json.encodeToString(post).encodeToByteArray()
+        )?.decodeToString().toBoolean()
+
+    } catch (e: Exception) {
+        println(e.message.toString())
+        false
     }
 }

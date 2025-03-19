@@ -8,7 +8,7 @@ expect class Post
     val title:String
     val subtitle:String
     val thumbnail:String
-    val category:String
+    val category:Category
     val content:String
     val popular:Boolean
     val main:Boolean
