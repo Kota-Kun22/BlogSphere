@@ -11,7 +11,6 @@ import com.varabyte.kobweb.compose.foundation.layout.Box
 import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.ui.Alignment
 import com.varabyte.kobweb.compose.ui.Modifier
-import com.varabyte.kobweb.compose.ui.graphics.Colors
 import com.varabyte.kobweb.compose.ui.modifiers.backgroundColor
 import com.varabyte.kobweb.compose.ui.modifiers.borderRadius
 import com.varabyte.kobweb.compose.ui.modifiers.color
@@ -80,8 +79,9 @@ fun MessagePopup(
 
 @Composable
 fun LinkPopup(
+    editorControl:EditorControl,
     onDialogDismiss: () -> Unit,
-    onLinkAdded: (String,String) -> Unit
+    onAddClick: (String, String) -> Unit
 ){
     Box(
         modifier = Modifier
@@ -106,7 +106,7 @@ fun LinkPopup(
            Input(
                type = InputType.Text,
                attrs = Modifier
-                   .width(500.px)
+                   .width(400.px)
                    .id(Id.linkHrefInput)
                    .height(54.px)
                    .margin(bottom= 20.px)
@@ -116,12 +116,12 @@ fun LinkPopup(
                    .noBorder()
                    .borderRadius(10.px)
                    .backgroundColor(Theme.LightGray.rgb)
-                   .toAttrs{ attr("placeholder","Href") }
+                   .toAttrs{ attr("placeholder",if(editorControl==EditorControl.Link)"href" else "Image URL") }
            )
             Input(
                 type = InputType.Text,
                 attrs = Modifier
-                    .width(500.px)
+                    .width(400.px)
                     .id(Id.linkTitleInput)
                     .height(54.px)
                     .borderRadius(10.px)
@@ -131,13 +131,13 @@ fun LinkPopup(
                     .fontFamily(FONT_FAMILY)
                     .noBorder()
                     .backgroundColor(Theme.LightGray.rgb)
-                    .toAttrs{ attr("placeholder","Title") }
+                    .toAttrs{ attr("placeholder",if(editorControl==EditorControl.Link)"Title" else "Description") }
             )
             Button(attrs = Modifier
                 .onClick {
                     val href= (document.getElementById(Id.linkHrefInput)as HTMLInputElement).value
                     val title= (document.getElementById(Id.linkTitleInput)as HTMLInputElement).value
-                    onLinkAdded(href,title)
+                    onAddClick(href,title)
                     onDialogDismiss()
                 }
                 .fillMaxWidth()

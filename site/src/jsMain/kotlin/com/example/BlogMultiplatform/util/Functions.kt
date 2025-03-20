@@ -100,7 +100,8 @@ fun applyStyle(
 }
 fun applyControlStyle(
     editorControl: EditorControl,
-    onLinkClick:()->Unit
+    onLinkClick:()->Unit,
+    onImageClick:()->Unit
 ){
     when(editorControl){
 
@@ -149,6 +150,8 @@ fun applyControlStyle(
             )
         }
         EditorControl.Code->{}
-        EditorControl.Image->{}
+        EditorControl.Image->{
+            onImageClick()
+        }
     }
 }
