@@ -84,6 +84,7 @@ fun getSelectedText():String?{
     }else null
 }
 
+
 fun applyStyle(
     controlStyle: ControlStyle,
 ) {
@@ -98,6 +99,7 @@ fun applyStyle(
         document.getElementById(Id.editorPreview)?.innerHTML= getEditor().value
     }
 }
+
 fun applyControlStyle(
     editorControl: EditorControl,
     onLinkClick:()->Unit,
@@ -149,7 +151,14 @@ fun applyControlStyle(
                 )
             )
         }
-        EditorControl.Code->{}
+        EditorControl.Code->{
+            applyStyle(
+                ControlStyle.Code(
+                    selectedText = getSelectedText()
+                )
+            )
+        }
+
         EditorControl.Image->{
             onImageClick()
         }

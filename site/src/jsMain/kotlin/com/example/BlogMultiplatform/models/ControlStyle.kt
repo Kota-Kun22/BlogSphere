@@ -31,6 +31,7 @@ sealed class ControlStyle(val style: String) {
 
     data class Code(val selectedText: String?) : ControlStyle(
         style = "<div style=\"background-color:#0d1117;padding:12px;border-radius:6px;\"><pre><code class=\"language-kotlin\"> $selectedText </code></pre></div>"
+
     )
 
     data class Image(

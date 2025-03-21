@@ -22,6 +22,7 @@ import com.example.BlogMultiplatform.util.Id
 import com.example.BlogMultiplatform.util.addPost
 import com.example.BlogMultiplatform.util.applyControlStyle
 import com.example.BlogMultiplatform.util.applyStyle
+import com.example.BlogMultiplatform.util.getEditor
 import com.example.BlogMultiplatform.util.getSelectedText
 import com.example.BlogMultiplatform.util.isUserLoggedIn
 import com.example.BlogMultiplatform.util.noBorder
@@ -55,6 +56,7 @@ import com.varabyte.kobweb.compose.css.Overflow
 import com.varabyte.kobweb.compose.css.Resize
 import com.varabyte.kobweb.compose.css.ScrollBehavior
 import com.varabyte.kobweb.compose.css.Visibility
+import com.varabyte.kobweb.compose.style.KobwebComposeStyleSheet.scope
 import com.varabyte.kobweb.compose.ui.attrsModifier
 import com.varabyte.kobweb.compose.ui.graphics.Colors
 import com.varabyte.kobweb.compose.ui.modifiers.backgroundColor
@@ -69,6 +71,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
 import com.varabyte.kobweb.compose.ui.modifiers.id
 import com.varabyte.kobweb.compose.ui.modifiers.maxHeight
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
+import com.varabyte.kobweb.compose.ui.modifiers.onKeyDown
 import com.varabyte.kobweb.compose.ui.modifiers.outline
 import com.varabyte.kobweb.compose.ui.modifiers.overflow
 import com.varabyte.kobweb.compose.ui.modifiers.resize
@@ -584,7 +587,13 @@ fun EditorControls(
                          else Theme.Primary.rgb
                      )
                      .noBorder()
-                     .onClick { oneEditorVisibilityChange() }
+                     .onClick {
+                         oneEditorVisibilityChange()
+                         js("hljs.highlightAll()") as Unit
+                         document.getElementById(Id.editorPreview)?.innerHTML= getEditor().value
+
+
+                     }
                      .toAttrs()
              ){
                  SpanText(
@@ -643,6 +652,15 @@ fun Editor(editorVisibility:Boolean)
                 .resize(Resize.None)
                 .fontFamily(FONT_FAMILY)
                 .noBorder()
+                .onKeyDown {
+                    if (it.code == "Enter" && it.shiftKey){
+                        applyStyle(
+                           controlStyle = ControlStyle.Break(
+                               selectedText = getSelectedText()
+                           )
+                        )
+                    }
+                }
                 .visibility(
                     if(editorVisibility) Visibility.Visible
                     else Visibility.Hidden
@@ -670,8 +688,9 @@ fun Editor(editorVisibility:Boolean)
                 .noBorder()
                 .scrollBehavior(ScrollBehavior.Smooth)
                 .toAttrs()
-        )
+        ){
 
+        }
     }
 }
 
