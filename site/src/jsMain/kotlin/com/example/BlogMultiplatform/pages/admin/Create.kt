@@ -590,7 +590,7 @@ fun EditorControls(
                      .onClick {
                          oneEditorVisibilityChange()
                          js("hljs.highlightAll()") as Unit
-                         document.getElementById(Id.editorPreview)?.innerHTML= getEditor().value
+
 
 
                      }
