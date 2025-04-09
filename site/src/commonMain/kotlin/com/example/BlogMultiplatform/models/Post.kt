@@ -14,3 +14,15 @@ expect class Post
     val main:Boolean
     val sponsored:Boolean
 }
+
+expect class PostWithoutDetails
+{
+    val _id:String
+    val author:String
+    val date:Long
+    val title:String
+    val subtitle:String
+    val thumbnail:String
+    val category:Category
+
+}

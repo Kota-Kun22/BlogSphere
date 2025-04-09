@@ -1,15 +1,19 @@
 package com.example.BlogMultiplatform.data
 
 import com.example.BlogMultiplatform.models.Post
+import com.example.BlogMultiplatform.models.PostWithoutDetails
 import com.example.BlogMultiplatform.models.User
 import com.example.BlogMultiplatform.utils.Constants.DATABASE_NAME
+import com.example.BlogMultiplatform.utils.Constants.MAIN_POSTS_LIMIT
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.and
+import com.mongodb.client.model.Indexes.descending
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.varabyte.kobweb.api.data.add
 import com.varabyte.kobweb.api.init.InitApi
 import com.varabyte.kobweb.api.init.InitApiContext
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.toList
 
 
 @InitApi
@@ -34,6 +38,17 @@ class MongoDB(private val context: InitApiContext):MongoRepository {
     override suspend fun addPost(post: Post): Boolean {
 
         return postCollection.insertOne(post).wasAcknowledged()
+    }
+
+
+    override suspend fun readMyPosts(skip: Int, author: String): List<PostWithoutDetails> {
+        return postCollection
+            .withDocumentClass(PostWithoutDetails::class.java)
+            .find(Filters.eq(PostWithoutDetails::author.name, author))
+            .sort(descending(PostWithoutDetails::date.name))
+            .skip(skip)
+            .limit(MAIN_POSTS_LIMIT)
+            .toList()
     }
 
     override suspend fun checkUserExists(user: User): User? {

@@ -1,5 +1,6 @@
 package com.example.BlogMultiplatform.util
 
+import com.example.BlogMultiplatform.models.ApiListResponse
 import com.example.BlogMultiplatform.models.Post
 import com.example.BlogMultiplatform.models.RandomJoke
 import com.example.BlogMultiplatform.models.User
@@ -130,5 +131,22 @@ suspend fun addPost(post: Post): Boolean {
     } catch (e: Exception) {
         println(e.message.toString())
         false
+    }
+}
+suspend fun fetchMyPosts(
+    skip: Int,
+    onSuccess: (ApiListResponse) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    try {
+        val result = window.api.tryGet(
+            apiPath = "readmyposts?skip=$skip&author=${localStorage["username"]}"
+        )?.decodeToString()
+
+        onSuccess(result.parseData())//different
+
+    } catch (e: Exception) {
+        println(e)
+        onError(e)
     }
 }
