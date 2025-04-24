@@ -47,6 +47,7 @@ import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.layout.SimpleGrid
 import com.varabyte.kobweb.silk.components.layout.numColumns
 import com.varabyte.kobweb.silk.components.text.SpanText
+import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
 import org.jetbrains.compose.web.css.CSSColorValue
 import org.jetbrains.compose.web.css.CSSSizeValue
 import org.jetbrains.compose.web.css.CSSUnit
@@ -63,8 +64,8 @@ import org.jetbrains.compose.web.dom.Span
 fun PostPreview(post:PostWithoutDetails){
 
     Column(modifier = Modifier
-
-        .backgroundColor(Colors.Yellow)
+        .fillMaxWidth(95.percent)
+        .margin(bottom = 24.px)
     ) {
 
         Image(
@@ -130,10 +131,11 @@ fun PostPreview(post:PostWithoutDetails){
 
 }
 @Composable
-fun Posts(posts:List<PostWithoutDetails>){
+fun Posts(breakpoint: Breakpoint,
+    posts:List<PostWithoutDetails>){
 
     Column(
-        modifier= Modifier.fillMaxWidth(90.percent),
+        modifier= Modifier.fillMaxWidth(if(breakpoint>Breakpoint.MD)80.percent else 90.percent),
         verticalArrangement = Arrangement.Center
     ) {
         SimpleGrid(modifier = Modifier.fillMaxWidth(), numColumns = numColumns(base=1,sm=2,md=3,lg=4))
