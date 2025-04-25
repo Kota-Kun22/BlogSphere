@@ -14,8 +14,10 @@ import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.FontWeight
 import com.varabyte.kobweb.compose.css.ObjectFit
 import com.varabyte.kobweb.compose.css.Overflow
+import com.varabyte.kobweb.compose.css.TextAlign
 import com.varabyte.kobweb.compose.css.TextOverflow
 import com.varabyte.kobweb.compose.css.TransitionProperty
+import com.varabyte.kobweb.compose.css.Visibility
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.foundation.layout.Row
@@ -38,8 +40,10 @@ import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.overflow
 import com.varabyte.kobweb.compose.ui.modifiers.padding
 import com.varabyte.kobweb.compose.ui.modifiers.size
+import com.varabyte.kobweb.compose.ui.modifiers.textAlign
 import com.varabyte.kobweb.compose.ui.modifiers.textOverflow
 import com.varabyte.kobweb.compose.ui.modifiers.transition
+import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.styleModifier
 import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.compose.ui.toAttrs
@@ -132,7 +136,10 @@ fun PostPreview(post:PostWithoutDetails){
 
 }
 @Composable
-fun Posts(breakpoint: Breakpoint,
+fun Posts(
+    showMoreVisibility:Boolean,
+    onShowMore:()->Unit,
+    breakpoint: Breakpoint,
     posts:List<PostWithoutDetails>){
 
     Column(
@@ -144,8 +151,18 @@ fun Posts(breakpoint: Breakpoint,
             posts.forEach {
                 PostPreview(post= it)
             }
-
         }
+        SpanText(modifier= Modifier
+            .fillMaxWidth()
+            .margin(topBottom = 50.px)
+            .textAlign(TextAlign.Center)
+            .fontFamily(FONT_FAMILY)
+            .fontSize(16.px)
+            .cursor(Cursor.Pointer)
+            .onClick { onShowMore() }
+            .visibility( if(showMoreVisibility) Visibility.Visible else Visibility.Hidden)
+            .fontWeight(FontWeight.Medium),
+            text="Show more"
+        )
     }
-
 }
