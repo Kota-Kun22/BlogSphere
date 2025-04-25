@@ -65,6 +65,7 @@ fun PostPreview(post:PostWithoutDetails){
 
     Column(modifier = Modifier
         .fillMaxWidth(95.percent)
+        .cursor(Cursor.Pointer)
         .margin(bottom = 24.px)
     ) {
 
@@ -111,20 +112,20 @@ fun PostPreview(post:PostWithoutDetails){
                 .overflow(Overflow.Hidden)
                 .styleModifier {
                     property("display","-webkit-box")
-                    property("-webkit-line-clamp","2")
-                    property("line-clamp","2")
+                    property("-webkit-line-clamp","3")
+                    property("line-clamp","3")
                     property("-webkit-box-orient","vertical")
                 },
             text= post.subtitle,
         )
-        SpanText(
-            modifier=Modifier
-                .fontFamily(FONT_FAMILY)
-                .fontSize(12.px)
-                .color(Theme.HalfBlack.rgb),
-            text=post.category.name
-        )
-
+//        SpanText(
+//            modifier=Modifier
+//                .fontFamily(FONT_FAMILY)
+//                .fontSize(12.px)
+//                .color(Theme.HalfBlack.rgb),
+//            text=post.category.name
+//        )
+        CategoryChip(category = post.category)
 
 
     }
