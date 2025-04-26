@@ -2,7 +2,6 @@ package com.example.BlogMultiplatform.pages.admin
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -18,12 +17,12 @@ import com.example.BlogMultiplatform.models.PostWithoutDetails
 import com.example.BlogMultiplatform.models.Theme
 import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
 
-import com.example.BlogMultiplatform.util.Constants.PAGE_WIDTH
 import com.example.BlogMultiplatform.util.Constants.POST_PER_PAGE
 import com.example.BlogMultiplatform.util.Constants.SIDE_PANEL_WIDTH
 import com.example.BlogMultiplatform.util.fetchMyPosts
 import com.example.BlogMultiplatform.util.isUserLoggedIn
 import com.example.BlogMultiplatform.util.noBorder
+import com.example.BlogMultiplatform.util.parseSwitchText
 import com.varabyte.kobweb.compose.css.FontWeight
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Box
@@ -41,7 +40,6 @@ import com.varabyte.kobweb.compose.ui.modifiers.fontSize
 import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
 import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.margin
-import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.padding
 import com.varabyte.kobweb.compose.ui.toAttrs
@@ -67,6 +65,7 @@ fun MyPostsPage()
     }
 
 }
+
 @Composable
 fun MyPostScreen()
 {
@@ -74,11 +73,15 @@ fun MyPostScreen()
     val breakpoint=rememberBreakpoint()
     val myPosts = remember { mutableStateListOf<PostWithoutDetails>() }
     val scope = rememberCoroutineScope()
+
+    val selectedPosts= remember{ mutableStateListOf<String>() }
+
     var postToSkip by remember { mutableStateOf(0) }
     var showMoreVisibility by remember{ mutableStateOf(false) }
 
+
     var selectable by remember { mutableStateOf(false) }
-    var text by remember { mutableStateOf("Select") }
+    var switchText by remember { mutableStateOf("Select") }
 
     LaunchedEffect(Unit){
         fetchMyPosts(
@@ -127,11 +130,20 @@ fun MyPostScreen()
                         modifier = Modifier.margin(right = 8.px),
                         size = SwitchSize.LG,
                         checked = selectable,
-                        onCheckedChange = {selectable= it}
+                        onCheckedChange = {
+                            selectable= it
+                            if(!selectable){
+                                switchText="Select"
+                                selectedPosts.clear()
+                            }else{
+                                switchText= "0 Posts Selected"
+                            }
+
+                        }
                     )
                     SpanText(
                         modifier = Modifier.color(if(selectable) Color.black else Theme.HalfBlack.rgb),
-                        text = text
+                        text = switchText
                     )
                 }
                 Button(attrs = Modifier
@@ -153,6 +165,17 @@ fun MyPostScreen()
             }
 
             Posts(
+                breakpoint=breakpoint,
+                posts = myPosts,
+                selectable= selectable,
+                onSelect={
+                    selectedPosts.add(it)
+                    switchText= parseSwitchText(selectedPosts.toList())
+                },
+                onDeselect = {
+                    selectedPosts.remove(it)
+                    switchText = parseSwitchText(selectedPosts.toList())
+                },
                 showMoreVisibility = showMoreVisibility,
                 onShowMore = {
                     scope.launch {
@@ -179,9 +202,7 @@ fun MyPostScreen()
                     }
 
                 },
-                breakpoint=breakpoint,
-                posts = myPosts)
+            )
         }
-
     }
 }

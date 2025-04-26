@@ -65,12 +65,42 @@ import org.jetbrains.compose.web.dom.Col
 import org.jetbrains.compose.web.dom.Span
 
 @Composable
-fun PostPreview(post:PostWithoutDetails){
+fun PostPreview(
 
-    Column(modifier = Modifier
-        .fillMaxWidth(95.percent)
-        .cursor(Cursor.Pointer)
-        .margin(bottom = 24.px)
+    post:PostWithoutDetails,
+
+    selectable:Boolean,
+    onSelect:(String)->Unit,
+    onDeselect:(String)->Unit,
+){
+    var checked by remember(selectable){ mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(95.percent)
+            .margin(bottom = 24.px)
+            .padding(all= if(selectable) 10.px else 0.px)
+            .borderRadius(r= 4.px)
+            .border(
+                width = if(selectable) 4.px else 0.px,
+                style = if(selectable) LineStyle.Solid else LineStyle.None,
+                color = if(checked) Theme.Primary.rgb else Theme.gray.rgb
+            )
+            .onClick {
+                if(selectable){
+                    checked= !checked
+                    if(checked){
+                        onSelect(post._id)
+                    }else{
+                        onDeselect(post._id)
+                    }
+                }
+            }
+            .styleModifier{
+                property("transition", "all 200ms")
+            }
+            .cursor(Cursor.Pointer)
+
     ) {
 
         Image(
@@ -122,16 +152,22 @@ fun PostPreview(post:PostWithoutDetails){
                 },
             text= post.subtitle,
         )
-//        SpanText(
-//            modifier=Modifier
-//                .fontFamily(FONT_FAMILY)
-//                .fontSize(12.px)
-//                .color(Theme.HalfBlack.rgb),
-//            text=post.category.name
-//        )
-        CategoryChip(category = post.category)
 
-
+     Row(
+         modifier= Modifier.fillMaxWidth(),
+         horizontalArrangement = Arrangement.SpaceBetween,
+         verticalAlignment = Alignment.CenterVertically
+     ){
+         CategoryChip(category = post.category)
+         if(selectable){
+             CheckboxInput(
+                 checked =checked ,
+                 attrs = Modifier
+                     .size(20.px)
+                     .toAttrs()
+             )
+         }
+     }
     }
 
 }
@@ -140,7 +176,11 @@ fun Posts(
     showMoreVisibility:Boolean,
     onShowMore:()->Unit,
     breakpoint: Breakpoint,
-    posts:List<PostWithoutDetails>){
+    selectable:Boolean=false,
+    onSelect:(String)->Unit,
+    onDeselect:(String)->Unit,
+    posts:List<PostWithoutDetails>
+){
 
     Column(
         modifier= Modifier.fillMaxWidth(if(breakpoint>Breakpoint.MD)80.percent else 90.percent),
@@ -149,7 +189,12 @@ fun Posts(
         SimpleGrid(modifier = Modifier.fillMaxWidth(), numColumns = numColumns(base=1,sm=2,md=3,lg=4))
         {
             posts.forEach {
-                PostPreview(post= it)
+                PostPreview(
+                    post= it,
+                    selectable = selectable,
+                    onSelect = onSelect,
+                    onDeselect = onDeselect
+                )
             }
         }
         SpanText(modifier= Modifier
