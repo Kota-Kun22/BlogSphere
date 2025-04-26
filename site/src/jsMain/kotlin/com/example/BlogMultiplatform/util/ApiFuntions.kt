@@ -60,6 +60,7 @@ suspend fun checkUserExistence(user: User): UserWithOutPassword? {
         null
     }
 }
+
 suspend fun checkUserId(id:String):Boolean
 {
     return try {
@@ -76,6 +77,7 @@ suspend fun checkUserId(id:String):Boolean
     }
 
 }
+
 inline fun <reified T> String?.parseData(): T {
     if (this.isNullOrBlank()) throw IllegalArgumentException("Invalid JSON: null or empty")
     return try {
@@ -133,6 +135,7 @@ suspend fun addPost(post: Post): Boolean {
         false
     }
 }
+
 suspend fun fetchMyPosts(
     skip: Int,
     onSuccess: (ApiListResponse) -> Unit,
@@ -148,5 +151,18 @@ suspend fun fetchMyPosts(
     } catch (e: Exception) {
         println(e)
         onError(e)
+    }
+}
+
+suspend fun deleteSelectedPosts(ids: List<String>): Boolean {
+    return try {
+        val result = window.api.tryPost(
+            apiPath = "deleteselectedposts",
+            body = Json.encodeToString(ids).encodeToByteArray()
+        )?.decodeToString()
+        result.toBoolean()
+    } catch (e: Exception) {
+        println(e.message)
+        false
     }
 }

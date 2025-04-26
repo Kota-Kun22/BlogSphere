@@ -19,11 +19,13 @@ import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
 
 import com.example.BlogMultiplatform.util.Constants.POST_PER_PAGE
 import com.example.BlogMultiplatform.util.Constants.SIDE_PANEL_WIDTH
+import com.example.BlogMultiplatform.util.deleteSelectedPosts
 import com.example.BlogMultiplatform.util.fetchMyPosts
 import com.example.BlogMultiplatform.util.isUserLoggedIn
 import com.example.BlogMultiplatform.util.noBorder
 import com.example.BlogMultiplatform.util.parseSwitchText
 import com.varabyte.kobweb.compose.css.FontWeight
+import com.varabyte.kobweb.compose.css.Visibility
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Box
 import com.varabyte.kobweb.compose.foundation.layout.Column
@@ -42,6 +44,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.padding
+import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.Page
 
@@ -157,7 +160,23 @@ fun MyPostScreen()
                     .fontFamily(FONT_FAMILY)
                     .fontSize(14.px)
                     .fontWeight(FontWeight.Medium)
-                    .onClick {}
+                    .visibility(if(selectedPosts.isNotEmpty()) Visibility.Visible else Visibility.Hidden)
+                    .onClick {
+                       scope.launch {
+                           val result = deleteSelectedPosts(ids= selectedPosts)
+                          if(result){
+                              selectable= false
+                              switchText= "Select"
+                              postToSkip -= selectedPosts.size
+                              selectedPosts.forEach {deletedPostId->
+                                  myPosts.removeAll{
+                                      it._id==deletedPostId
+                                  }
+                              }
+                              selectedPosts.clear()
+                          }
+                       }
+                    }
                     .toAttrs()
                 ) {
                     SpanText(text="DELETE")
