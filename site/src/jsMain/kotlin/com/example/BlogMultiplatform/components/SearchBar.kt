@@ -93,7 +93,8 @@ fun SearchBar(
                 type = InputType.Text,
                 attrs = Modifier
                     .id(Id.adminSearchBar)
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .padding(left=5.px)
                     .color(if (darkTheme) Colors.White else Colors.Black)
                     .backgroundColor(Colors.Transparent)
                     .noBorder()
