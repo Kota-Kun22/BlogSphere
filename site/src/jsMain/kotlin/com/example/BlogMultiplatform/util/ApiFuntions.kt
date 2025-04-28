@@ -67,31 +67,19 @@ suspend fun checkUserExistence(user: User): UserWithOutPassword? {
     }
 }
 
-suspend fun checkUserId(id:String):Boolean
-{
+suspend fun checkUserId(id: String): Boolean {
     return try {
-        val result= window.api.tryPost(
-            apiPath="checkuserid",
-            body=Json.encodeToString(id).encodeToByteArray()
-        )
-        result?.decodeToString()?.let { Json.decodeFromString<Boolean>(it) }?:false
-
-    }catch(e:Exception){
+        window.api.tryPost(
+            apiPath = "checkuserid",
+            body = Json.encodeToString(id).encodeToByteArray()
+        )?.decodeToString().parseData()
+    } catch (e: Exception) {
         println(e.message.toString())
         false
-
-    }
-
-}
-
-inline fun <reified T> String?.parseData(): T {
-    if (this.isNullOrBlank()) throw IllegalArgumentException("Invalid JSON: null or empty")
-    return try {
-        Json.decodeFromString(this)
-    } catch (e: Exception) {
-        throw IllegalArgumentException("Failed to parse JSON: ${this}")
     }
 }
+
+
 
 suspend fun fetchRandomJoke(onComplete: (RandomJoke) -> Unit) {
     val date = localStorage["date"]
@@ -101,7 +89,7 @@ suspend fun fetchRandomJoke(onComplete: (RandomJoke) -> Unit) {
         if (dayHasPassed) {
             try {
                 val result = window.http.get(Constants.HUMOR_API_URL).decodeToString()
-                onComplete(Json.decodeFromString(result))
+                onComplete(result.parseData())
                 localStorage["date"] = Date.now().toString()
                 localStorage["joke"] = result
             } catch (e: Exception) {
@@ -119,7 +107,7 @@ suspend fun fetchRandomJoke(onComplete: (RandomJoke) -> Unit) {
     } else {
         try {
             val result = window.http.get(Constants.HUMOR_API_URL).decodeToString()
-            onComplete(Json.decodeFromString(result))
+            onComplete(result.parseData())
             localStorage["date"] = Date.now().toString()
             localStorage["joke"] = result
         } catch (e: Exception) {
@@ -129,19 +117,21 @@ suspend fun fetchRandomJoke(onComplete: (RandomJoke) -> Unit) {
     }
 }
 
+
+//changed
 suspend fun addPost(post: Post): Boolean {
     return try {
         window.api.tryPost(
             apiPath = "addpost",
             body = Json.encodeToString(post).encodeToByteArray()
         )?.decodeToString().toBoolean()
-
     } catch (e: Exception) {
-        println(e.message.toString())
+        println(e.message)
         false
     }
 }
 
+//change
 suspend fun fetchMyPosts(
     skip: Int,
     onSuccess: (ApiListResponse) -> Unit,
@@ -151,15 +141,14 @@ suspend fun fetchMyPosts(
         val result = window.api.tryGet(
             apiPath = "readmyposts?${SKIP_PARAM}=$skip&${AUTHOR_PARAM}=${localStorage["username"]}"
         )?.decodeToString()
-
-        onSuccess(result.parseData())//different
-
+        onSuccess(result.parseData())
     } catch (e: Exception) {
         println(e)
         onError(e)
     }
 }
 
+//changed
 suspend fun deleteSelectedPosts(ids: List<String>): Boolean {
     return try {
         val result = window.api.tryPost(
@@ -173,6 +162,7 @@ suspend fun deleteSelectedPosts(ids: List<String>): Boolean {
     }
 }
 
+//changed
 suspend fun searchPostsByTitle(
     query: String,
     skip: Int,
@@ -190,18 +180,27 @@ suspend fun searchPostsByTitle(
     }
 }
 
+//changed
 suspend fun fetchSelectedPost(id: String): ApiResponse {
     return try {
         val result = window.api.tryGet(
             apiPath = "readselectedpost?${POST_ID_PARAM}=$id"
         )?.decodeToString()
-        if(result!=null){
-            return Json.decodeFromString<ApiResponse>(result)
-        }else{
-            return ApiResponse.Error(message = "RESULT IS NULL")
-        }
+        result?.parseData() ?: ApiResponse.Error(message = "Result is null")
     } catch (e: Exception) {
         println(e)
         ApiResponse.Error(message = e.message.toString())
     }
+}
+//inline fun <reified T> String?.parseData(): T {
+//    if (this.isNullOrBlank()) throw IllegalArgumentException("Invalid JSON: null or empty")
+//    return try {
+//        Json.decodeFromString(this)
+//    } catch (e: Exception) {
+//        throw IllegalArgumentException("Failed to parse JSON: ${this}")
+//    }
+//}
+
+inline fun <reified T> String?.parseData(): T {
+    return Json.decodeFromString(this.toString())
 }
