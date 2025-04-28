@@ -1,10 +1,10 @@
 package com.example.BlogMultiplatform.data
 
+import com.example.BlogMultiplatform.models.Constants.POST_PER_PAGE
 import com.example.BlogMultiplatform.models.Post
 import com.example.BlogMultiplatform.models.PostWithoutDetails
 import com.example.BlogMultiplatform.models.User
 import com.example.BlogMultiplatform.utils.Constants.DATABASE_NAME
-import com.example.BlogMultiplatform.utils.Constants.POST_PER_PAGE
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Indexes.descending

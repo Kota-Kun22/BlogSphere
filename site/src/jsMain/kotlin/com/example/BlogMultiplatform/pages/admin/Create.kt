@@ -12,6 +12,7 @@ import com.example.BlogMultiplatform.components.LinkPopup
 import com.example.BlogMultiplatform.components.MessagePopup
 import com.example.BlogMultiplatform.models.ApiResponse
 import com.example.BlogMultiplatform.models.Category
+import com.example.BlogMultiplatform.models.Constants.POST_ID_PARAM
 import com.example.BlogMultiplatform.models.ControlStyle
 import com.example.BlogMultiplatform.models.EditorControl
 import com.example.BlogMultiplatform.models.Post
@@ -19,7 +20,7 @@ import com.example.BlogMultiplatform.models.Theme
 import com.example.BlogMultiplatform.navigation.Screen
 import com.example.BlogMultiplatform.styles.EditorKeyStyle
 import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
-import com.example.BlogMultiplatform.util.Constants.POST_ID_PARAM
+
 import com.example.BlogMultiplatform.util.Constants.SIDE_PANEL_WIDTH
 import com.example.BlogMultiplatform.util.Id
 import com.example.BlogMultiplatform.util.addPost

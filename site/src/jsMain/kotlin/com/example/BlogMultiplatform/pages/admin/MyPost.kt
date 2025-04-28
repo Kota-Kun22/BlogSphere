@@ -12,14 +12,15 @@ import com.example.BlogMultiplatform.components.AdminPageLayout
 import com.example.BlogMultiplatform.components.Posts
 import com.example.BlogMultiplatform.components.SearchBar
 import com.example.BlogMultiplatform.models.ApiListResponse
+import com.example.BlogMultiplatform.models.Constants.POST_PER_PAGE
+import com.example.BlogMultiplatform.models.Constants.QUERY_PARAM
 import com.example.BlogMultiplatform.models.PostWithoutDetails
 
 import com.example.BlogMultiplatform.models.Theme
 import com.example.BlogMultiplatform.navigation.Screen
 import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
 
-import com.example.BlogMultiplatform.util.Constants.POST_PER_PAGE
-import com.example.BlogMultiplatform.util.Constants.QUERY_PARAM
+
 import com.example.BlogMultiplatform.util.Constants.SIDE_PANEL_WIDTH
 import com.example.BlogMultiplatform.util.Id
 import com.example.BlogMultiplatform.util.deleteSelectedPosts

@@ -1,7 +1,8 @@
 package com.example.BlogMultiplatform.navigation
 
-import com.example.BlogMultiplatform.util.Constants.POST_ID_PARAM
-import com.example.BlogMultiplatform.util.Constants.QUERY_PARAM
+import com.example.BlogMultiplatform.models.Constants.POST_ID_PARAM
+import com.example.BlogMultiplatform.models.Constants.QUERY_PARAM
+
 
 sealed class Screen(val route:String)
 {
