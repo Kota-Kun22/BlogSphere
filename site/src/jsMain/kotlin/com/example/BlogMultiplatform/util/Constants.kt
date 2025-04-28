@@ -8,6 +8,7 @@ object Constants {
     const val HUMOR_API_URL="https://praise-phrases-api.onrender.com/praise"
     const val POST_PER_PAGE=8
     const val QUERY_PARAM= "query"
+    const val POST_ID_PARAM="postId"
     const val SKIP_PARAM="skip"
 }
 //"https://api.humorapi.com/jokes/random?include-tags=animal&api-key=e06e2011d9ad4facb64b3367a3804b32&max-length=180"

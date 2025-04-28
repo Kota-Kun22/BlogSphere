@@ -5,9 +5,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.example.BlogMultiplatform.models.Post
 import com.example.BlogMultiplatform.models.PostWithoutDetails
 import com.example.BlogMultiplatform.models.Theme
+import com.example.BlogMultiplatform.navigation.Screen
 import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
 import com.example.BlogMultiplatform.util.parseDateString
 import com.varabyte.kobweb.compose.css.Cursor
@@ -16,7 +16,6 @@ import com.varabyte.kobweb.compose.css.ObjectFit
 import com.varabyte.kobweb.compose.css.Overflow
 import com.varabyte.kobweb.compose.css.TextAlign
 import com.varabyte.kobweb.compose.css.TextOverflow
-import com.varabyte.kobweb.compose.css.TransitionProperty
 import com.varabyte.kobweb.compose.css.Visibility
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Column
@@ -24,7 +23,6 @@ import com.varabyte.kobweb.compose.foundation.layout.Row
 import com.varabyte.kobweb.compose.ui.Alignment
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.graphics.Colors
-import com.varabyte.kobweb.compose.ui.modifiers.backgroundColor
 import com.varabyte.kobweb.compose.ui.modifiers.border
 import com.varabyte.kobweb.compose.ui.modifiers.borderRadius
 import com.varabyte.kobweb.compose.ui.modifiers.color
@@ -33,7 +31,6 @@ import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.fontFamily
 import com.varabyte.kobweb.compose.ui.modifiers.fontSize
 import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
-import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.objectFit
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
@@ -42,58 +39,54 @@ import com.varabyte.kobweb.compose.ui.modifiers.padding
 import com.varabyte.kobweb.compose.ui.modifiers.size
 import com.varabyte.kobweb.compose.ui.modifiers.textAlign
 import com.varabyte.kobweb.compose.ui.modifiers.textOverflow
-import com.varabyte.kobweb.compose.ui.modifiers.transition
 import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.styleModifier
-import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.compose.ui.toAttrs
+import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.layout.SimpleGrid
 import com.varabyte.kobweb.silk.components.layout.numColumns
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
-import org.jetbrains.compose.web.css.CSSColorValue
-import org.jetbrains.compose.web.css.CSSSizeValue
-import org.jetbrains.compose.web.css.CSSUnit
-import org.jetbrains.compose.web.css.Color
 import org.jetbrains.compose.web.css.LineStyle
-import org.jetbrains.compose.web.css.ms
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.CheckboxInput
-import org.jetbrains.compose.web.dom.Col
-import org.jetbrains.compose.web.dom.Span
 
 @Composable
 fun PostPreview(
 
     post:PostWithoutDetails,
 
-    selectable:Boolean,
+    selectableMode:Boolean,
     onSelect:(String)->Unit,
     onDeselect:(String)->Unit,
 ){
-    var checked by remember(selectable){ mutableStateOf(false) }
+    val context= rememberPageContext()
+    var checked by remember(selectableMode){ mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxWidth(95.percent)
             .margin(bottom = 24.px)
-            .padding(all= if(selectable) 10.px else 0.px)
+            .padding(all= if(selectableMode) 10.px else 0.px)
             .borderRadius(r= 4.px)
             .border(
-                width = if(selectable) 4.px else 0.px,
-                style = if(selectable) LineStyle.Solid else LineStyle.None,
+                width = if(selectableMode) 4.px else 0.px,
+                style = if(selectableMode) LineStyle.Solid else LineStyle.None,
                 color = if(checked) Theme.Primary.rgb else Theme.gray.rgb
             )
             .onClick {
-                if(selectable){
+                if(selectableMode){
                     checked= !checked
                     if(checked){
                         onSelect(post._id)
                     }else{
                         onDeselect(post._id)
                     }
+                }else{
+                    context.router.navigateTo(Screen.AdminCreate.passPostId(id=post._id))
+
                 }
             }
             .styleModifier{
@@ -159,7 +152,7 @@ fun PostPreview(
          verticalAlignment = Alignment.CenterVertically
      ){
          CategoryChip(category = post.category)
-         if(selectable){
+         if(selectableMode){
              CheckboxInput(
                  checked =checked ,
                  attrs = Modifier
@@ -176,7 +169,7 @@ fun Posts(
     showMoreVisibility:Boolean,
     onShowMore:()->Unit,
     breakpoint: Breakpoint,
-    selectable:Boolean=false,
+    selectableMode:Boolean=false,
     onSelect:(String)->Unit,
     onDeselect:(String)->Unit,
     posts:List<PostWithoutDetails>
@@ -191,7 +184,7 @@ fun Posts(
             posts.forEach {
                 PostPreview(
                     post= it,
-                    selectable = selectable,
+                    selectableMode = selectableMode,
                     onSelect = onSelect,
                     onDeselect = onDeselect
                 )

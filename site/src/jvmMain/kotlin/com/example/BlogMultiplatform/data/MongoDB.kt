@@ -87,6 +87,10 @@ class MongoDB(private val context: InitApiContext):MongoRepository {
         }
     }
 
+    override suspend fun readSelectedPost(id: String): Post {
+        return postCollection.find(Filters.eq(Post::_id.name, id)).toList().first()
+    }
+
     override suspend fun searchPostsByTittle(query: String, skip: Int): List<PostWithoutDetails> {
         val regexQuery = query.toRegex(RegexOption.IGNORE_CASE)
         return postCollection

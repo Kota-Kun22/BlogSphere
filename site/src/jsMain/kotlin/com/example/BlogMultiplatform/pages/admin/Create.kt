@@ -1,6 +1,7 @@
 package com.example.BlogMultiplatform.pages.admin
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -9,6 +10,7 @@ import androidx.compose.runtime.setValue
 import com.example.BlogMultiplatform.components.AdminPageLayout
 import com.example.BlogMultiplatform.components.LinkPopup
 import com.example.BlogMultiplatform.components.MessagePopup
+import com.example.BlogMultiplatform.models.ApiResponse
 import com.example.BlogMultiplatform.models.Category
 import com.example.BlogMultiplatform.models.ControlStyle
 import com.example.BlogMultiplatform.models.EditorControl
@@ -17,11 +19,13 @@ import com.example.BlogMultiplatform.models.Theme
 import com.example.BlogMultiplatform.navigation.Screen
 import com.example.BlogMultiplatform.styles.EditorKeyStyle
 import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
+import com.example.BlogMultiplatform.util.Constants.POST_ID_PARAM
 import com.example.BlogMultiplatform.util.Constants.SIDE_PANEL_WIDTH
 import com.example.BlogMultiplatform.util.Id
 import com.example.BlogMultiplatform.util.addPost
 import com.example.BlogMultiplatform.util.applyControlStyle
 import com.example.BlogMultiplatform.util.applyStyle
+import com.example.BlogMultiplatform.util.fetchSelectedPost
 import com.example.BlogMultiplatform.util.getEditor
 import com.example.BlogMultiplatform.util.getSelectedText
 import com.example.BlogMultiplatform.util.isUserLoggedIn
@@ -136,7 +140,20 @@ fun CreateScreen()
     val context= rememberPageContext()
     val scope=rememberCoroutineScope()
     val breakpoint= rememberBreakpoint()
-   var uiState by remember { mutableStateOf(CreatePageUiState()) }
+    var uiState by remember { mutableStateOf(CreatePageUiState()) }
+    var hasPostIdParam= remember(key1= context.route){ context.route.params.containsKey(POST_ID_PARAM) }
+
+
+    LaunchedEffect(hasPostIdParam){
+        if(hasPostIdParam){
+            val postId= context.route.params.getValue(POST_ID_PARAM)
+            val response = fetchSelectedPost(id= postId)
+            if(response is ApiResponse.Success){
+                println(response.data)
+            }
+        }
+    }
+
 
     AdminPageLayout {
 

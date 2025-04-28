@@ -1,10 +1,12 @@
 package com.example.BlogMultiplatform.util
 
 import com.example.BlogMultiplatform.models.ApiListResponse
+import com.example.BlogMultiplatform.models.ApiResponse
 import com.example.BlogMultiplatform.models.Post
 import com.example.BlogMultiplatform.models.RandomJoke
 import com.example.BlogMultiplatform.models.User
 import com.example.BlogMultiplatform.models.UserWithOutPassword
+import com.example.BlogMultiplatform.util.Constants.POST_ID_PARAM
 import com.varabyte.kobweb.browser.api
 import com.varabyte.kobweb.browser.http.http
 import kotlinx.browser.localStorage
@@ -181,5 +183,21 @@ suspend fun searchPostsByTitle(
     } catch (e: Exception) {
         println(e.message)
         onError(e)
+    }
+}
+
+suspend fun fetchSelectedPost(id: String): ApiResponse {
+    return try {
+        val result = window.api.tryGet(
+            apiPath = "readselectedpost?${POST_ID_PARAM}=$id"
+        )?.decodeToString()
+        if(result!=null){
+            return Json.decodeFromString<ApiResponse>(result)
+        }else{
+            return ApiResponse.Error(message = "RESULT IS NULL")
+        }
+    } catch (e: Exception) {
+        println(e)
+        ApiResponse.Error(message = e.message.toString())
     }
 }

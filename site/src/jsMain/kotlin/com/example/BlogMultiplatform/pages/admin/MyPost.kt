@@ -48,7 +48,6 @@ import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.padding
-import com.varabyte.kobweb.compose.ui.modifiers.transition
 import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.styleModifier
 import com.varabyte.kobweb.compose.ui.toAttrs
@@ -92,11 +91,11 @@ fun MyPostScreen()
     var showMoreVisibility by remember{ mutableStateOf(false) }
 
 
-    var selectable by remember { mutableStateOf(false) }
+    var selectableMode by remember { mutableStateOf(false) }
     var switchText by remember { mutableStateOf("Select") }
 
     val hasParams= remember(key1= context.route){context.route.params.containsKey(QUERY_PARAM)}
-    var query= remember(key1= context.route) {
+    val query= remember(key1= context.route) {
         try{
             context.route.params.getValue(QUERY_PARAM)
 
@@ -163,7 +162,7 @@ fun MyPostScreen()
             ){
                 SearchBar(
                     modifier = Modifier
-                        .visibility( if(selectable) Visibility.Hidden else Visibility.Visible)
+                        .visibility( if(selectableMode) Visibility.Hidden else Visibility.Visible)
                         .styleModifier { property("transition","all 200ms") },
                     onEnterClick = {
                     val query =
@@ -192,10 +191,10 @@ fun MyPostScreen()
                     Switch(
                         modifier = Modifier.margin(right = 8.px),
                         size = SwitchSize.LG,
-                        checked = selectable,
+                        checked = selectableMode,
                         onCheckedChange = {
-                            selectable= it
-                            if(!selectable){
+                            selectableMode= it
+                            if(!selectableMode){
                                 switchText="Select"
                                 selectedPosts.clear()
                             }else{
@@ -205,7 +204,7 @@ fun MyPostScreen()
                         }
                     )
                     SpanText(
-                        modifier = Modifier.color(if(selectable) Color.black else Theme.HalfBlack.rgb),
+                        modifier = Modifier.color(if(selectableMode) Color.black else Theme.HalfBlack.rgb),
                         text = switchText
                     )
                 }
@@ -225,7 +224,7 @@ fun MyPostScreen()
                        scope.launch {
                            val result = deleteSelectedPosts(ids= selectedPosts)
                           if(result){
-                              selectable= false
+                              selectableMode= false
                               switchText= "Select"
                               postToSkip -= selectedPosts.size
                               selectedPosts.forEach {deletedPostId->
@@ -246,7 +245,7 @@ fun MyPostScreen()
             Posts(
                 breakpoint=breakpoint,
                 posts = myPosts,
-                selectable= selectable,
+                selectableMode= selectableMode,
                 onSelect={
                     selectedPosts.add(it)
                     switchText= parseSwitchText(selectedPosts.toList())

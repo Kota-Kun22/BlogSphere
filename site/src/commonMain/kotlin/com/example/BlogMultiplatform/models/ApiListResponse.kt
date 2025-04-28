@@ -7,3 +7,11 @@ expect sealed  class ApiListResponse {
     class Error
 
 }
+
+expect sealed  class ApiResponse {
+
+    object Idle
+    class Success
+    class Error
+
+}
