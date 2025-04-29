@@ -39,6 +39,22 @@ suspend fun addPost(context: ApiContext) {
     }
 
 }
+
+@Api(routeOverride = "updatepost")
+suspend fun updatePost(context: ApiContext) {
+    try {
+        val updatedPost = context.req.getBody<Post>()
+        context.res.setBody(
+            updatedPost?.let {
+                context.data.getValue<MongoDB>().updatePost(it)
+            }
+        )
+    } catch (e: Exception) {
+        context.res.setBody(e.message)
+    }
+}
+
+
 @Api(routeOverride = "readmyposts")
 suspend fun readMyPosts(context: ApiContext) {
     try {

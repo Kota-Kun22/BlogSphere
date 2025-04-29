@@ -79,7 +79,17 @@ suspend fun checkUserId(id: String): Boolean {
     }
 }
 
-
+suspend fun updatePost(post: Post): Boolean {
+    return try {
+        window.api.tryPost(
+            apiPath = "updatepost",
+            body = Json.encodeToString(post).encodeToByteArray()
+        )?.decodeToString().toBoolean()
+    } catch (e: Exception) {
+        println(e.message)
+        false
+    }
+}
 
 suspend fun fetchRandomJoke(onComplete: (RandomJoke) -> Unit) {
     val date = localStorage["date"]

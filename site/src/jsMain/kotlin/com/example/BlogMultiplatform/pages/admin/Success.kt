@@ -2,6 +2,7 @@ package com.example.BlogMultiplatform.pages.admin
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import com.example.BlogMultiplatform.models.Constants.UPDATED_PARAM
 
 import com.example.BlogMultiplatform.models.Theme
 import com.example.BlogMultiplatform.navigation.Screen
@@ -28,6 +29,7 @@ import com.varabyte.kobweb.silk.components.graphics.Image
 @Composable
 fun SuccessPage(){
     val context= rememberPageContext()
+    val postUpdated= context.route.params.containsKey(UPDATED_PARAM)
 
     LaunchedEffect(Unit){
         delay(5000)
@@ -48,7 +50,7 @@ fun SuccessPage(){
             modifier = Modifier
                 .fontFamily(FONT_FAMILY)
                 .fontSize(24.px),
-            text ="Post Successfully Updated!"
+            text =if(postUpdated)"POST  SUCCESSFULLY UPDATED !!..  " else "POST SUCCESSFULLY CREATED!!..."
         )
         SpanText(
             modifier = Modifier

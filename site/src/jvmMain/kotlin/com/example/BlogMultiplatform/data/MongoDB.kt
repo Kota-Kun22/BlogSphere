@@ -8,6 +8,7 @@ import com.example.BlogMultiplatform.utils.Constants.DATABASE_NAME
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Indexes.descending
+import com.mongodb.client.model.Updates
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.varabyte.kobweb.api.data.add
 import com.varabyte.kobweb.api.init.InitApi
@@ -38,6 +39,24 @@ class MongoDB(private val context: InitApiContext):MongoRepository {
     override suspend fun addPost(post: Post): Boolean {
 
         return postCollection.insertOne(post).wasAcknowledged()
+    }
+
+    override suspend fun updatePost(post: Post): Boolean {
+        return postCollection
+            .updateOne(
+                Filters.eq(Post::_id.name, post._id),
+                mutableListOf(
+                    Updates.set(Post::title.name, post.title),
+                    Updates.set(Post::subtitle.name, post.subtitle),
+                    Updates.set(Post::category.name, post.category),
+                    Updates.set(Post::thumbnail.name, post.thumbnail),
+                    Updates.set(Post::content.name, post.content),
+                    Updates.set(Post::main.name, post.main),
+                    Updates.set(Post::popular.name, post.popular),
+                    Updates.set(Post::sponsored.name, post.sponsored)
+                )
+            )
+            .wasAcknowledged()
     }
 
 

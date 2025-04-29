@@ -20,81 +20,78 @@ import com.example.BlogMultiplatform.models.Theme
 import com.example.BlogMultiplatform.navigation.Screen
 import com.example.BlogMultiplatform.styles.EditorKeyStyle
 import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
-
 import com.example.BlogMultiplatform.util.Constants.SIDE_PANEL_WIDTH
 import com.example.BlogMultiplatform.util.Id
 import com.example.BlogMultiplatform.util.addPost
 import com.example.BlogMultiplatform.util.applyControlStyle
 import com.example.BlogMultiplatform.util.applyStyle
 import com.example.BlogMultiplatform.util.fetchSelectedPost
-import com.example.BlogMultiplatform.util.getEditor
 import com.example.BlogMultiplatform.util.getSelectedText
 import com.example.BlogMultiplatform.util.isUserLoggedIn
 import com.example.BlogMultiplatform.util.noBorder
+import com.example.BlogMultiplatform.util.updatePost
 import com.varabyte.kobweb.browser.file.loadDataUrlFromDisk
-import com.varabyte.kobweb.compose.foundation.layout.Arrangement
-import com.varabyte.kobweb.compose.foundation.layout.Box
-import com.varabyte.kobweb.compose.foundation.layout.Column
-import com.varabyte.kobweb.compose.foundation.layout.Row
-import com.varabyte.kobweb.compose.ui.Alignment
-import com.varabyte.kobweb.compose.ui.Modifier
-import com.varabyte.kobweb.compose.ui.modifiers.color
-import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
-import com.varabyte.kobweb.compose.ui.modifiers.fontFamily
-import com.varabyte.kobweb.compose.ui.modifiers.fontSize
-import com.varabyte.kobweb.compose.ui.modifiers.height
-import com.varabyte.kobweb.compose.ui.modifiers.margin
-import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
-import com.varabyte.kobweb.compose.ui.modifiers.padding
-import com.varabyte.kobweb.core.Page
-import com.varabyte.kobweb.silk.components.forms.Switch
-import com.varabyte.kobweb.silk.components.forms.SwitchSize
-import com.varabyte.kobweb.silk.components.layout.SimpleGrid
-import com.varabyte.kobweb.silk.components.layout.numColumns
-import com.varabyte.kobweb.silk.components.text.SpanText
-import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
-import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
-import org.jetbrains.compose.web.css.px
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.FontWeight
 import com.varabyte.kobweb.compose.css.Overflow
 import com.varabyte.kobweb.compose.css.Resize
 import com.varabyte.kobweb.compose.css.ScrollBehavior
 import com.varabyte.kobweb.compose.css.Visibility
-import com.varabyte.kobweb.compose.style.KobwebComposeStyleSheet.scope
+import com.varabyte.kobweb.compose.foundation.layout.Arrangement
+import com.varabyte.kobweb.compose.foundation.layout.Box
+import com.varabyte.kobweb.compose.foundation.layout.Column
+import com.varabyte.kobweb.compose.foundation.layout.Row
+import com.varabyte.kobweb.compose.ui.Alignment
+import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.attrsModifier
 import com.varabyte.kobweb.compose.ui.graphics.Colors
 import com.varabyte.kobweb.compose.ui.modifiers.backgroundColor
 import com.varabyte.kobweb.compose.ui.modifiers.border
 import com.varabyte.kobweb.compose.ui.modifiers.borderRadius
 import com.varabyte.kobweb.compose.ui.modifiers.classNames
+import com.varabyte.kobweb.compose.ui.modifiers.color
 import com.varabyte.kobweb.compose.ui.modifiers.cursor
 import com.varabyte.kobweb.compose.ui.modifiers.disabled
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxHeight
+import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
+import com.varabyte.kobweb.compose.ui.modifiers.fontFamily
+import com.varabyte.kobweb.compose.ui.modifiers.fontSize
 import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
+import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.id
+import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.maxHeight
+import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.onKeyDown
 import com.varabyte.kobweb.compose.ui.modifiers.outline
 import com.varabyte.kobweb.compose.ui.modifiers.overflow
+import com.varabyte.kobweb.compose.ui.modifiers.padding
 import com.varabyte.kobweb.compose.ui.modifiers.resize
 import com.varabyte.kobweb.compose.ui.modifiers.scrollBehavior
 import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.compose.ui.toAttrs
+import com.varabyte.kobweb.core.Page
 import com.varabyte.kobweb.core.rememberPageContext
+import com.varabyte.kobweb.silk.components.forms.Switch
+import com.varabyte.kobweb.silk.components.forms.SwitchSize
 import com.varabyte.kobweb.silk.components.graphics.Image
+import com.varabyte.kobweb.silk.components.layout.SimpleGrid
+import com.varabyte.kobweb.silk.components.layout.numColumns
+import com.varabyte.kobweb.silk.components.text.SpanText
+import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.style.toModifier
+import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import kotlinx.browser.document
 import kotlinx.browser.localStorage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.Color
 import org.jetbrains.compose.web.css.LineStyle
+import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.A
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
@@ -117,6 +114,7 @@ data class CreatePageUiState(
     var thumbnailInputDisabled: Boolean=true,
     var content:String="",
     var category:Category=Category.Programing,
+    var buttonText:String= "Create",
     var popular:Boolean=false,
     var main:Boolean=false,
     var sponsored:Boolean=false,
@@ -124,7 +122,25 @@ data class CreatePageUiState(
     var messagePopup:Boolean=false,
     var linkPopup:Boolean=false,
     var imagePopup:Boolean=false
-)
+){
+    fun reset() = this.copy(
+        _id = "",
+        title = "",
+        subtitle = "",
+        thumbnail = "",
+        content = "",
+        category = Category.Programing,
+        buttonText="CREATE",
+        main = false,
+        popular = false,
+        sponsored = false,
+        editorVisibility = true,
+        messagePopup = false,
+        linkPopup = false,
+        imagePopup = false
+    )
+
+}
 
 @Page
 @Composable
@@ -150,8 +166,25 @@ fun CreateScreen()
             val postId= context.route.params.getValue(POST_ID_PARAM)
             val response = fetchSelectedPost(id= postId)
             if(response is ApiResponse.Success){
+                (document.getElementById(Id.editor)as HTMLTextAreaElement).value= response.data.content
+                uiState= uiState.copy(
+                    _id=response.data._id,
+                    title= response.data.title,
+                    subtitle = response.data.subtitle,
+                    content = response.data.content,
+                    thumbnail = response.data.thumbnail,
+                    category = response.data.category,
+                    buttonText ="UPDATE...",
+                    popular = response.data.popular,
+                    main = response.data.main,
+                    sponsored = response.data.sponsored
+                )
                 println(response.data)
             }
+        }
+        else{
+            (document.getElementById(Id.editor)as HTMLTextAreaElement).value= ""
+            uiState= uiState.reset()
         }
     }
 
@@ -249,6 +282,7 @@ fun CreateScreen()
                         .fontSize(16.px)
                         .toAttrs {
                             attr("placeholder", "Title")
+                            attr("value",uiState.title)
 
                         }
                 )
@@ -267,6 +301,7 @@ fun CreateScreen()
                         .fontSize(16.px)
                         .toAttrs {
                             attr("placeholder", "Subtitle")
+                            attr("value",uiState.subtitle)
 
                         }
                 )
@@ -328,6 +363,7 @@ fun CreateScreen()
                 Editor(editorVisibility = uiState.editorVisibility)
 
                 CreateButton(
+                    text= uiState.buttonText,
                     onClick = {
 
                     uiState =
@@ -350,24 +386,45 @@ fun CreateScreen()
                     ){
                         scope.launch {
                             println("CLICKED")
-                            val result= addPost(
-                                Post(
-                                    _id = uiState._id,
-                                    author = localStorage["username"].toString(),
-                                    title=uiState.title,
-                                    subtitle = uiState.subtitle,
-                                    date= Date.now().toLong(),
-                                    thumbnail = uiState.thumbnail,
-                                    content = uiState.content,
-                                    category = uiState.category,
-                                    popular = uiState.popular,
-                                    main = uiState.main,
-                                    sponsored = uiState.sponsored
+                            if(hasPostIdParam){
+
+                                val result = updatePost(
+                                    Post(
+                                        _id = uiState._id,
+                                        title = uiState.title,
+                                        subtitle = uiState.subtitle,
+                                        thumbnail = uiState.thumbnail,
+                                        content = uiState.content,
+                                        category = uiState.category,
+                                        popular = uiState.popular,
+                                        main = uiState.main,
+                                        sponsored = uiState.sponsored
+                                    )
                                 )
-                            )
-                            if(result){
-                                context.router.navigateTo(Screen.AdminSuccess.route)
-                                println("SUCCESSFULLLLLLLLLLLL")
+                                if (result) {
+                                    context.router.navigateTo(Screen.AdminSuccess.route)
+                                }
+
+                            }else{
+                                val result= addPost(
+                                    Post(
+                                        _id = uiState._id,
+                                        author = localStorage["username"].toString(),
+                                        title=uiState.title,
+                                        subtitle = uiState.subtitle,
+                                        date= Date.now().toLong(),
+                                        thumbnail = uiState.thumbnail,
+                                        content = uiState.content,
+                                        category = uiState.category,
+                                        popular = uiState.popular,
+                                        main = uiState.main,
+                                        sponsored = uiState.sponsored
+                                    )
+                                )
+                                if(result){
+                                    context.router.navigateTo(Screen.AdminSuccess.postUpdated())
+                                    println("SUCCESSFULLLLLLLLLLLL")
+                                }
                             }
                         }
                     }else{
@@ -714,8 +771,10 @@ fun Editor(editorVisibility:Boolean)
 
 
 @Composable
-fun CreateButton(onClick: () -> Unit)
-{
+fun CreateButton(
+    text:String,
+    onClick: () -> Unit
+) {
     Button(
         attrs = Modifier
             .onClick { onClick() }
@@ -730,6 +789,6 @@ fun CreateButton(onClick: () -> Unit)
             .fontSize(16.px)
             .toAttrs()
     ) {
-        SpanText(text="Create Your Blog!!")
+        SpanText(text=text)
     }
 }
