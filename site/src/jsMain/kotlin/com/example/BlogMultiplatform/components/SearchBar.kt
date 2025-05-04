@@ -40,6 +40,7 @@ import org.jetbrains.compose.web.css.px
 import com.varabyte.kobweb.silk.components.icons.fa.FaMagnifyingGlass
 import com.varabyte.kobweb.silk.components.icons.fa.IconSize
 import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
+import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.dom.Input
 
@@ -68,7 +69,7 @@ fun SearchBar(
                 )
                 .padding(left = 20.px)
                 .height(54.px)
-                .backgroundColor(if (darkTheme) Theme.HalfBlack.rgb else Theme.LightGray.rgb)
+                .backgroundColor(if (darkTheme) Theme.Tertiary.rgb else Theme.LightGray.rgb)
                 .borderRadius(r = 100.px)
                 .border(
                     width = 2.px,
@@ -76,7 +77,7 @@ fun SearchBar(
                     color = if (focused && !darkTheme) Theme.Primary.rgb
                     else if (focused && darkTheme) Theme.Primary.rgb
                     else if (!focused && !darkTheme) Theme.LightGray.rgb
-                    else if (!focused && darkTheme) Theme.Secondary.rgb
+                   else if (!focused && darkTheme) Theme.Secondary.rgb
                     else Theme.LightGray.rgb
                 )
                 .transition(Transition.Companion.of(property = "all", duration = 200.ms)),

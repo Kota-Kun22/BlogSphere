@@ -9,18 +9,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.example.BlogMultiplatform.components.AdminPageLayout
-import com.example.BlogMultiplatform.components.Posts
+import com.example.BlogMultiplatform.components.PostsView
 import com.example.BlogMultiplatform.components.SearchBar
 import com.example.BlogMultiplatform.models.ApiListResponse
 import com.example.BlogMultiplatform.models.Constants.POST_PER_PAGE
 import com.example.BlogMultiplatform.models.Constants.QUERY_PARAM
 import com.example.BlogMultiplatform.models.PostWithoutDetails
-
 import com.example.BlogMultiplatform.models.Theme
 import com.example.BlogMultiplatform.navigation.Screen
 import com.example.BlogMultiplatform.util.Constants.FONT_FAMILY
-
-
 import com.example.BlogMultiplatform.util.Constants.SIDE_PANEL_WIDTH
 import com.example.BlogMultiplatform.util.Id
 import com.example.BlogMultiplatform.util.deleteSelectedPosts
@@ -54,7 +51,6 @@ import com.varabyte.kobweb.compose.ui.styleModifier
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.Page
 import com.varabyte.kobweb.core.rememberPageContext
-
 import com.varabyte.kobweb.silk.components.forms.Switch
 import com.varabyte.kobweb.silk.components.forms.SwitchSize
 import com.varabyte.kobweb.silk.components.text.SpanText
@@ -243,7 +239,7 @@ fun MyPostScreen()
                 }
             }
 
-            Posts(
+            PostsView(
                 breakpoint=breakpoint,
                 posts = myPosts,
                 selectableMode= selectableMode,
@@ -305,6 +301,9 @@ fun MyPostScreen()
                     }
 
                 },
+                onClick = {
+                    context.router.navigateTo(Screen.AdminCreate.passPostId(id=it ))
+                }
             )
         }
     }

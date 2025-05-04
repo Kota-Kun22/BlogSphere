@@ -6,6 +6,7 @@ import com.example.BlogMultiplatform.models.Constants.AUTHOR_PARAM
 import com.example.BlogMultiplatform.models.Constants.POST_ID_PARAM
 import com.example.BlogMultiplatform.models.Constants.QUERY_PARAM
 import com.example.BlogMultiplatform.models.Constants.SKIP_PARAM
+import com.example.BlogMultiplatform.models.NewsLetter
 import com.example.BlogMultiplatform.models.Post
 import com.example.BlogMultiplatform.models.RandomJoke
 import com.example.BlogMultiplatform.models.User
@@ -157,6 +158,61 @@ suspend fun fetchMyPosts(
         onError(e)
     }
 }
+suspend fun fetchMainPosts(
+    onSuccess: (ApiListResponse) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    try {
+        val result = window.api.tryGet(apiPath = "readmainposts")?.decodeToString()
+        onSuccess(result.parseData())
+    } catch (e: Exception) {
+        println(e)
+        onError(e)
+    }
+}
+
+suspend fun fetchLatestPosts(
+    skip: Int,
+    onSuccess: (ApiListResponse) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    try {
+        val result =
+            window.api.tryGet(apiPath = "readlatestposts?${SKIP_PARAM}=$skip")?.decodeToString()
+        onSuccess(result.parseData())
+    } catch (e: Exception) {
+        println(e)
+        onError(e)
+    }
+}
+
+suspend fun fetchSponsoredPosts(
+    onSuccess: (ApiListResponse) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    try {
+        val result = window.api.tryGet(apiPath = "readsponsoredposts")?.decodeToString()
+        onSuccess(result.parseData())
+    } catch (e: Exception) {
+        println(e)
+        onError(e)
+    }
+}
+
+suspend fun fetchPopularPosts(
+    skip: Int,
+    onSuccess: (ApiListResponse) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    try {
+        val result =
+            window.api.tryGet(apiPath = "readpopularposts?${SKIP_PARAM}=$skip")?.decodeToString()
+        onSuccess(result.parseData())
+    } catch (e: Exception) {
+        println(e)
+        onError(e)
+    }
+}
 
 //changed
 suspend fun deleteSelectedPosts(ids: List<String>): Boolean {
@@ -201,6 +257,13 @@ suspend fun fetchSelectedPost(id: String): ApiResponse {
         println(e)
         ApiResponse.Error(message = e.message.toString())
     }
+}
+
+suspend fun subscribeToNewsletter(newsletter: NewsLetter): String {
+    return window.api.tryPost(
+        apiPath = "subscribe",
+        body = Json.encodeToString(newsletter).encodeToByteArray()
+    )?.decodeToString().toString().replace("\"", "")
 }
 //inline fun <reified T> String?.parseData(): T {
 //    if (this.isNullOrBlank()) throw IllegalArgumentException("Invalid JSON: null or empty")

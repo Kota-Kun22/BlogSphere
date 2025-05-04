@@ -16,6 +16,7 @@ import com.example.BlogMultiplatform.util.Constants.SIDE_PANEL_WIDTH
 import com.example.BlogMultiplatform.util.Id
 import com.example.BlogMultiplatform.util.Res
 import com.example.BlogMultiplatform.util.logout
+import com.varabyte.kobweb.compose.css.Content
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.Overflow
 import com.varabyte.kobweb.compose.css.ScrollBehavior
@@ -252,7 +253,9 @@ private fun CollapsedSidePanel(onMenuClick: () -> Unit) {
     }
 }
 @Composable
-fun OverflowSidePanel(onMenuClose: () ->Unit )
+fun OverflowSidePanel(
+    onMenuClose: () ->Unit,
+    content: @Composable () -> Unit)
 {
     val scope = rememberCoroutineScope()
     val breakpoint= rememberBreakpoint()
@@ -327,7 +330,7 @@ fun OverflowSidePanel(onMenuClose: () ->Unit )
                     alt = "Logo Image"
                 )
             }
-            NavigationItems()
+           content()
 
         }
     }

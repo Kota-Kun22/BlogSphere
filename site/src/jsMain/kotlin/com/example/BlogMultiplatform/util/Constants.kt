@@ -4,7 +4,9 @@ object Constants {
     const val FONT_FAMILY="ROBOTO"
     const val SIDE_PANEL_WIDTH=250
     const val PAGE_WIDTH=1920
+    const val HEADER_HEIGHT= 100
     const val COLLAPSED_SIDE_PANEL_HEIGHT=100
+
     const val HUMOR_API_URL="https://praise-phrases-api.onrender.com/praise"
 //    const val POST_PER_PAGE=8
 //    const val QUERY_PARAM= "query"
@@ -15,6 +17,7 @@ object Constants {
 object Res{
     object Image {
         const val logo = "/logo.svg"
+        const val logoHome = "logo.svg"
         const val laugh = "/laugh.png"
     }
     object Icon {
@@ -43,6 +46,8 @@ object Id{
     const val svgParent= "svgParent"
     const val vectorIcon="vectorIcon"
     const val navigationText="navigationText"
+
+    const val emailInput="emailInput"
 
     const val editor= "editor"
     const val editorPreview="editorPreview"

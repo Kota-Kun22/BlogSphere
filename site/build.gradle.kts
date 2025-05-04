@@ -44,6 +44,7 @@ kotlin {
         commonMain.dependencies {
           // Add shared dependencies between JS and JVM here
             implementation(libs.kotlinx.serialization) // Add serialization to commonMain
+
         }
         jsMain.dependencies {
             implementation(libs.compose.runtime)

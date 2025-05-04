@@ -1,10 +1,12 @@
 package com.example.BlogMultiplatform.data
 
 import com.example.BlogMultiplatform.models.Constants.POST_PER_PAGE
+import com.example.BlogMultiplatform.models.NewsLetter
 import com.example.BlogMultiplatform.models.Post
 import com.example.BlogMultiplatform.models.PostWithoutDetails
 import com.example.BlogMultiplatform.models.User
 import com.example.BlogMultiplatform.utils.Constants.DATABASE_NAME
+import com.example.BlogMultiplatform.utils.Constants.MAIN_POSTS_LIMIT
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Indexes.descending
@@ -34,6 +36,7 @@ class MongoDB(private val context: InitApiContext):MongoRepository {
     private val database = client.getDatabase(DATABASE_NAME)
     private val userCollection = database.getCollection<User>("user")//name of the collection like it will contain the user with their id and pass
     private val postCollection= database.getCollection<Post>("post")
+    private val newsletterCollection = database.getCollection<NewsLetter>("newsletter")
 
 
     override suspend fun addPost(post: Post): Boolean {
@@ -69,6 +72,51 @@ class MongoDB(private val context: InitApiContext):MongoRepository {
             .limit(POST_PER_PAGE)
             .toList()
     }
+
+    override suspend fun readMainPosts(): List<PostWithoutDetails> {
+        return postCollection
+            .withDocumentClass(PostWithoutDetails::class.java)
+            .find(Filters.eq(PostWithoutDetails::main.name, true))
+            .sort(descending(PostWithoutDetails::date.name))
+            .limit(MAIN_POSTS_LIMIT)
+            .toList()
+
+    }
+
+    override suspend fun readLatestPosts(skip: Int): List<PostWithoutDetails> {
+        return postCollection
+            .withDocumentClass(PostWithoutDetails::class.java)
+            .find(
+                Filters.and(
+                    Filters.eq(PostWithoutDetails::popular.name, false),
+                    Filters.eq(PostWithoutDetails::main.name, false),
+                    Filters.eq(PostWithoutDetails::sponsored.name, false)
+                )
+            )
+            .sort(descending(PostWithoutDetails::date.name))
+            .skip(skip)
+            .limit(POST_PER_PAGE)
+            .toList()
+    }
+
+    override suspend fun readSponsoredPosts(): List<PostWithoutDetails> {
+        return postCollection
+            .withDocumentClass(PostWithoutDetails::class.java)
+            .find(Filters.eq(PostWithoutDetails::sponsored.name, true))
+            .sort(descending(PostWithoutDetails::date.name))
+            .limit(2)
+            .toList()
+    }
+    override suspend fun readPopularPosts(skip: Int): List<PostWithoutDetails> {
+        return postCollection
+            .withDocumentClass(PostWithoutDetails::class.java)
+            .find(Filters.eq(PostWithoutDetails::popular.name, true))
+            .sort(descending(PostWithoutDetails::date.name))
+            .skip(skip)
+            .limit(POST_PER_PAGE)
+            .toList()
+    }
+
 
     override suspend fun deleteSelectedPosts(ids: List<String>): Boolean {
         return postCollection
@@ -121,4 +169,20 @@ class MongoDB(private val context: InitApiContext):MongoRepository {
             .toList()
 
     }
-}
+
+    override suspend fun subscribe(newsletter: NewsLetter): String {
+
+        val result = newsletterCollection
+            .find(Filters.eq(NewsLetter::email.name, newsletter.email))
+            .toList()
+        return if (result.isNotEmpty()) {
+            "You're already subscribed."
+        } else {
+            val newEmail = newsletterCollection
+                .insertOne(newsletter)
+                .wasAcknowledged()
+            if (newEmail) "Successfully Subscribed!"
+            else "Something went wrong. Please try again later."
+        }
+    }
+    }
